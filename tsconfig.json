@@ -16,7 +16,8 @@
       "@funa/*": ["./funa/*"],
       "@user/*": ["./user/*"],
       "@shared/*": ["./shared/*"],
-      "@discord/*": ["./discord/*"]
+      "@discord/*": ["./discord/*"],
+      "@miscellaneous/*": ["./miscellaneous/*"]
     }
   }
 }

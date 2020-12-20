@@ -1,6 +1,10 @@
 import { COMMAND_DECORATOR } from '@discord/constant/decorator';
 
-export type CommandOptions = { name: string };
+export type CommandOptions = {
+  name: string;
+  action?: string;
+  actions?: string[];
+};
 
 export const Command = (options: CommandOptions): MethodDecorator => (
   target: Record<string, string>,

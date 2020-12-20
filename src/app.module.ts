@@ -2,6 +2,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { DiscordModule } from '@discord/discord.module';
 import { FunaModule } from '@funa/funa.module';
+import { MiscellaneousModule } from 'miscellaneous/miscellaneous.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SharedModule } from '@shared/shared.module';
@@ -23,6 +24,7 @@ import { SharedModule } from '@shared/shared.module';
       }),
     }),
     FunaModule,
+    MiscellaneousModule,
     SharedModule.forRootGuards(),
   ],
 })

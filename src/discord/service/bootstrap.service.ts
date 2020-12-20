@@ -2,6 +2,7 @@ import {
   CLIENT_DECORATOR,
   COMMAND_DECORATOR,
   GUARD_DECORATOR,
+  PREFIX_DECORATOR,
 } from '@discord/constant/decorator';
 import { Client, Message } from 'discord.js';
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
@@ -12,7 +13,12 @@ import { IGuard } from '@discord/interface/guard.interface';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { isObject } from 'lodash';
 
-export type CommandInstance = { name: string; instance: any; method: string };
+export type CommandInstance = {
+  name: string;
+  instance: any;
+  method: string;
+  actions: string[];
+};
 
 @Injectable()
 export class BootstrapService implements OnApplicationBootstrap {
@@ -41,13 +47,40 @@ export class BootstrapService implements OnApplicationBootstrap {
       const command_body: string = message.content.slice(prefix.length);
       const args: string[] = command_body.split(' ');
       const commandName: string = args.shift().toLowerCase();
-      const commandInstance: CommandInstance = commands.find(
+      const commandInstances: CommandInstance[] = commands.filter(
         (command: CommandInstance) => command.name === commandName,
       );
+
+      if (!commandInstances.length) {
+        return;
+      }
+
+      const commandInstance: CommandInstance = commandInstances
+        .filter((commandInstance: CommandInstance) => {
+          const { actions } = commandInstance;
+
+          for (let i = 0; i < actions.length; i++) {
+            if (actions[i] !== args[i]) {
+              return false;
+            }
+          }
+
+          return true;
+        })
+        .reduce((accumulator: CommandInstance, value: CommandInstance) => {
+          if (!accumulator) {
+            return value;
+          } else if (accumulator.actions.length < value.actions.length) {
+            return value;
+          } else {
+            return accumulator;
+          }
+        }, null);
 
       if (!commandInstance) {
         return;
       }
+
       const { instance, method } = commandInstance;
 
       const guards: Type<IGuard>[] = this.scanGuardsMetadata(instance, method);
@@ -104,11 +137,16 @@ export class BootstrapService implements OnApplicationBootstrap {
       return null;
     }
 
-    this.scanClientMetadata(instance);
+    this.scanPropertiesMetadata(instance);
 
-    const { name } = commandMetadata;
+    const { name, action, actions } = commandMetadata;
 
-    return { name, instance, method };
+    return {
+      name,
+      instance,
+      method,
+      actions: action ? [action] : actions || [],
+    };
   }
 
   private scanGuardsMetadata(instance: any, method: string): Type<IGuard>[] {
@@ -120,17 +158,34 @@ export class BootstrapService implements OnApplicationBootstrap {
     return metadata || [];
   }
 
-  private scanClientMetadata(instance: any): void {
+  private scanPropertiesMetadata(instance: any): void {
     for (let propertyKey in instance) {
-      const clientMetadata = Reflect.getMetadata(
-        CLIENT_DECORATOR,
-        instance,
-        propertyKey,
-      );
+      this.scanClientMetadata(instance, propertyKey);
+      this.scanPrefixMetadata(instance, propertyKey);
+    }
+  }
 
-      if (clientMetadata) {
-        instance[propertyKey] = this.clientService.getDiscordClient();
-      }
+  private scanClientMetadata(instance: any, propertyKey: string): void {
+    const metadata = Reflect.getMetadata(
+      CLIENT_DECORATOR,
+      instance,
+      propertyKey,
+    );
+
+    if (metadata) {
+      instance[propertyKey] = this.clientService.getDiscordClient();
+    }
+  }
+
+  private scanPrefixMetadata(instance: any, propertyKey: string): void {
+    const metadata = Reflect.getMetadata(
+      PREFIX_DECORATOR,
+      instance,
+      propertyKey,
+    );
+
+    if (metadata) {
+      instance[propertyKey] = this.clientService.prefix;
     }
   }
 }

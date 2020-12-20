@@ -139,6 +139,13 @@ export class FunaGateway {
     await message.channel.send(`${responseMessage} ${Emotes.JARMONIS_RAGE}`);
   }
 
+  @Command({ name: 'funar' })
+  async funar(message: Message): Promise<void> {
+    await message.reply(
+      `el comando es \`!funa\`... estás todo meco ${Emotes.KEK} ${Emotes.KEKW}`,
+    );
+  }
+
   private createResponseMessage({ isForMe, username, counter }): string {
     const times = counter > 1 ? 'veces' : 'vez';
 

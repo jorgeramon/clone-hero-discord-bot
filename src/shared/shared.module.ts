@@ -4,6 +4,7 @@ import { BotMentionGuard } from '@shared/guard/bot-mention.guard';
 import { ChristmasGuard } from '@shared/guard/christmas.guard';
 import { EmptyMentionGuard } from '@shared/guard/empty-mention.guard';
 import { FunaModule } from '@funa/funa.module';
+import { IsAdminGuard } from './guard/is-admin.guard';
 import { LupitaGuard } from '@shared/guard/lupita.guard';
 import { SpecialDateService } from './service/special-date.service';
 
@@ -21,6 +22,7 @@ export class SharedModule {
         EmptyMentionGuard,
         LupitaGuard,
         ChristmasGuard,
+        IsAdminGuard,
       ],
     };
   }

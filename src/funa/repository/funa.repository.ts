@@ -4,7 +4,7 @@ import { FunaDocument, FunaModel } from '@funa/schema/funa.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Collections } from '@shared/enum/colllections.enum';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class FunaRepository {
@@ -150,5 +150,9 @@ export class FunaRepository {
     ]);
 
     return result;
+  }
+
+  getFunasByUser(to: string): Promise<IFuna[]> {
+    return this.model.find({ to: Types.ObjectId(to) } as any).exec();
   }
 }

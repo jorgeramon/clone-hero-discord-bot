@@ -44,4 +44,9 @@ export class FunaService {
   getTopFunatorsReport(limit: number): Promise<IFunaReport[]> {
     return this.repository.getTopFunatorsReport(limit);
   }
+
+  async getFunasByUser(toDiscord: User): Promise<IFuna[]> {
+    const to: IUser = await this.userService.findOrCreate(toDiscord);
+    return this.repository.getFunasByUser(to._id);
+  }
 }

@@ -1,14 +1,13 @@
-import { ClientEvents, Message } from 'discord.js';
-
-import { DiscordGuard } from 'discord-nestjs';
+import { IGuard } from '@discord/interface/guard.interface';
+import { Injectable } from '@nestjs/common';
+import { Message } from 'discord.js';
 import { SpecialDateService } from '@shared/service/special-date.service';
 
-export class LupitaGuard implements DiscordGuard {
-  private readonly specialDateService = new SpecialDateService();
+@Injectable()
+export class LupitaGuard implements IGuard {
+  constructor(private readonly specialDateService: SpecialDateService) {}
 
-  async canActive(event: keyof ClientEvents, context: any[]): Promise<boolean> {
-    const message: Message = context[0];
-
+  async canActivate(message: Message): Promise<boolean> {
     if (this.specialDateService.isLupitaDay()) {
       await message.reply(
         'hoy no hay funas por el día de la lupita 🙏, ¿Ya fuiste a misa?',

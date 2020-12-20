@@ -1,9 +1,10 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { DiscordModule } from 'discord-nestjs';
+import { DiscordModule } from '@discord/discord.module';
 import { FunaModule } from '@funa/funa.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SharedModule } from '@shared/shared.module';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         token: configService.get<string>('BOT_TOKEN'),
-        commandPrefix: configService.get<string>('COMMAND_PREFIX'),
+        prefix: configService.get<string>('COMMAND_PREFIX'),
       }),
     }),
     MongooseModule.forRootAsync({
@@ -22,6 +23,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       }),
     }),
     FunaModule,
+    SharedModule.forRootGuards(),
   ],
 })
 export class AppModule {}

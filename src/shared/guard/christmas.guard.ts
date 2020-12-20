@@ -1,15 +1,14 @@
-import { ClientEvents, Message } from 'discord.js';
-
-import { DiscordGuard } from 'discord-nestjs';
 import { Emotes } from '@shared/enum/emotes.enum';
+import { IGuard } from '@discord/interface/guard.interface';
+import { Injectable } from '@nestjs/common';
+import { Message } from 'discord.js';
 import { SpecialDateService } from '@shared/service/special-date.service';
 
-export class ChristmasGuard implements DiscordGuard {
-  private readonly specialDateService = new SpecialDateService();
+@Injectable()
+export class ChristmasGuard implements IGuard {
+  constructor(private readonly specialDateService: SpecialDateService) {}
 
-  async canActive(event: keyof ClientEvents, context: any[]): Promise<boolean> {
-    const message: Message = context[0];
-
+  async canActivate(message: Message): Promise<boolean> {
     if (this.specialDateService.isChristmas()) {
       await message.reply(
         `hoy no hay funas por ser navidad ${Emotes.PADORUUCHH}, ¿Dónde está tu espiritu navideño ${Emotes.JARMONIS_RAGE}?`,

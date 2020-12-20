@@ -1,36 +1,27 @@
-import { LimitDTO } from '@funa/dto/limit.dto';
-import { IFunaReport } from '@funa/interface/funa-report.interface';
-import { FunaService } from '@funa/service/funa.service';
-import { Injectable } from '@nestjs/common';
-import { Emotes } from '@shared/enum/emotes.enum';
+import { Client, Message, User } from 'discord.js';
+
 import { BotMentionGuard } from '@shared/guard/bot-mention.guard';
 import { ChristmasGuard } from '@shared/guard/christmas.guard';
+import { Command } from '@discord/decorator/command.decorator';
+import { Emotes } from '@shared/enum/emotes.enum';
 import { EmptyMentionGuard } from '@shared/guard/empty-mention.guard';
+import { FunaService } from '@funa/service/funa.service';
+import { Guards } from '@discord/decorator/guard.decorator';
+import { IFunaReport } from '@funa/interface/funa-report.interface';
+import { InjectClient } from '@discord/decorator/inject-client.decorator';
+import { Injectable } from '@nestjs/common';
 import { LupitaGuard } from '@shared/guard/lupita.guard';
-import {
-  Client,
-  Content,
-  Context,
-  DiscordClient,
-  OnCommand,
-  UseGuards,
-} from 'discord-nestjs';
-import { Message, User } from 'discord.js';
 
 @Injectable()
 export class FunaGateway {
-  @Client()
-  client: DiscordClient;
+  @InjectClient()
+  client: Client;
 
   constructor(private readonly funaService: FunaService) {}
-  @OnCommand({ name: 'funadores' })
-  async funadores(
-    @Content() content: LimitDTO,
-    @Context() context: any[],
-  ): Promise<void> {
-    const message: Message = context[0];
 
-    let limit: number = parseInt(content.limit);
+  @Command({ name: 'funadores' })
+  async funadores(message: Message, args: string[]): Promise<void> {
+    let limit: number = parseInt(args[0]);
     limit = limit > 0 && limit <= 15 ? limit : 3;
 
     const funas: IFunaReport[] = await this.funaService.getTopFunatorsReport(
@@ -64,14 +55,9 @@ export class FunaGateway {
     await message.channel.send(messages);
   }
 
-  @OnCommand({ name: 'funados' })
-  async funados(
-    @Content() content: LimitDTO,
-    @Context() context: any[],
-  ): Promise<void> {
-    const message: Message = context[0];
-
-    let limit: number = parseInt(content.limit);
+  @Command({ name: 'funados' })
+  async funados(message: Message, args: string[]): Promise<void> {
+    let limit: number = parseInt(args[0]);
     limit = limit > 0 && limit <= 15 ? limit : 3;
 
     const funas: IFunaReport[] = await this.funaService.getTopFunasReport(
@@ -105,8 +91,37 @@ export class FunaGateway {
     await message.channel.send(messages);
   }
 
-  @UseGuards(ChristmasGuard, LupitaGuard, BotMentionGuard, EmptyMentionGuard)
-  @OnCommand({ name: 'funa' })
+  @Guards(BotMentionGuard)
+  @Command({ name: 'funas' })
+  async funas(message: Message): Promise<void> {
+    let data = {
+      username: null,
+      isForMe: false,
+      counter: 0,
+    };
+
+    if (!message.mentions.users.size) {
+      const documents = await this.funaService.getFunasByUser(message.author);
+
+      data.isForMe = true;
+      data.counter = documents.length;
+    } else {
+      const user = message.mentions.users.first();
+      const documents = await this.funaService.getFunasByUser(user);
+
+      data.username = user.username;
+      data.counter = documents.length;
+    }
+
+    if (data.isForMe) {
+      await message.reply(this.createResponseMessage(data));
+    } else {
+      await message.channel.send(this.createResponseMessage(data));
+    }
+  }
+
+  @Guards(ChristmasGuard, LupitaGuard, BotMentionGuard, EmptyMentionGuard)
+  @Command({ name: 'funa' })
   async funa(message: Message): Promise<void> {
     await Promise.all(
       message.mentions.users.map((user: User) =>
@@ -122,5 +137,23 @@ export class FunaGateway {
       message.mentions.users.size > 1 ? ' han sido funados' : ' ha sido funado';
 
     await message.channel.send(`${responseMessage} ${Emotes.JARMONIS_RAGE}`);
+  }
+
+  private createResponseMessage({ isForMe, username, counter }): string {
+    const times = counter > 1 ? 'veces' : 'vez';
+
+    switch (true) {
+      case isForMe && !counter:
+        return `no has sido funado crack ${Emotes.JARMONIS_APPROVES}`;
+
+      case isForMe && counter > 0:
+        return `has sido funado **${counter}** ${times} ${Emotes.JARMONIS}`;
+
+      case !isForMe && !counter:
+        return `${username} no ha sido funado ${Emotes.JARMONIS_APPROVES}`;
+
+      case !isForMe && counter > 0:
+        return `${username} ha sido funado **${counter}** ${times} ${Emotes.JARMONIS}`;
+    }
   }
 }

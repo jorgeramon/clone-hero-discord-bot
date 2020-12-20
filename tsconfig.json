@@ -15,7 +15,8 @@
     "paths": {
       "@funa/*": ["./funa/*"],
       "@user/*": ["./user/*"],
-      "@shared/*": ["./shared/*"]
+      "@shared/*": ["./shared/*"],
+      "@discord/*": ["./discord/*"]
     }
   }
 }

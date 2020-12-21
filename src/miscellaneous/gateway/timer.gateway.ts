@@ -15,6 +15,7 @@ export class TimerGateway {
       await message.channel.send(`HOY ES NAVIDAD ${Emotes.PADORUUCHH} 🎄 🎁`, {
         files: [
           'https://media1.giphy.com/media/l0tzgJRjGc7mGgsmXY/giphy.gif?cid=ecf05e478f1109863cc8c875b63a3020145a8476663fb7ac&rid=giphy.gif',
+          'https://media.discordapp.net/attachments/781742999579131904/790387403163959336/videoplayback.gif',
         ],
       });
     } else {

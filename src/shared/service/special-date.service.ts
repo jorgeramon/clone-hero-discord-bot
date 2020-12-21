@@ -21,7 +21,7 @@ export class SpecialDateService {
 
   daysUntilChristmas(): number {
     const now = moment();
-    const christmas = moment().month(11).date(25).startOf('day');
+    const christmas = moment().month(11).date(25).endOf('day');
     return christmas.diff(now, 'days');
   }
 

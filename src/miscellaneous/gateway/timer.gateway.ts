@@ -28,7 +28,7 @@ export class TimerGateway {
 
   @Command({ name: 'wonky' })
   async daysUntilWonkyDay(message: Message): Promise<void> {
-    if (!this.specialDateService.isWonkyDay()) {
+    if (this.specialDateService.isWonkyDay()) {
       const gifs = [
         'https://media1.giphy.com/media/Pt5PnJVtHuy2s/giphy.gif?cid=ecf05e47g1u8p8ffxp01c2a16uo2xfs3nk8r8bgvkhlc9ntc&rid=giphy.gif',
         'https://media1.giphy.com/media/l0Exhlza2TqHJzk5y/giphy.gif?cid=ecf05e47g1u8p8ffxp01c2a16uo2xfs3nk8r8bgvkhlc9ntc&rid=giphy.gif',

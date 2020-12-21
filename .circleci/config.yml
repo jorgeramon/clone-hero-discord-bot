@@ -1,0 +1,58 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:14.4.0
+    working_directory: ~/code
+    steps:
+      - checkout
+      - restore_cache:
+          name: Revisando cache de node_modules
+          key: node-modules-{{ checksum "yarn.lock" }}
+      - run:
+          name: Instalación de dependencias
+          command: yarn install
+      - save_cache:
+          name: Guardando cache de node_modules
+          key: node-modules-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/code/node_modules
+      - save_cache:
+          name: Guardando archivos para el deploy
+          key: deployment-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/code/dist
+            - ~/code/setup-env.sh
+            - ~/code/tsconfig-paths-bootstrap.js
+            - ~/code/tsconfig.json
+            - ~/code/package.json
+  deploy:
+    machine:
+      image: ubuntu-2004:202010-01
+    steps:
+      - restore_cache:
+          name: Restaurando la carpeta dist
+          key: deployment-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Instalando en el servidor
+          command: |
+            source ~/code/setup-env.sh
+            ssh -o StrictHostKeyChecking=no ${REMOTE_SERVER} exit
+            ssh ${REMOTE_SERVER} "rm -rf ${WORKSPACE}/dist"
+            scp -r ~/code/dist ~/code/tsconfig-paths-bootstrap.js ~/code/tsconfig.json ~/code/package.json ${REMOTE_SERVER}:${WORKSPACE}
+            ssh ${REMOTE_SERVER} "cd ${WORKSPACE} && ./${SETUP_SCRIPT}"
+
+workflows:
+  development:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master

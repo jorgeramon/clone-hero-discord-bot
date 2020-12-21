@@ -153,6 +153,31 @@ export class FunaRepository {
   }
 
   getFunasByUser(to: string): Promise<IFuna[]> {
-    return this.model.find({ to: Types.ObjectId(to) } as any).exec();
+    return this.model.find({ to: Types.ObjectId(to) } as any).lean();
+  }
+
+  getLatestFromFunado(to: string): Promise<IFuna> {
+    return this.model
+      .findOne({ to: Types.ObjectId(to) } as any)
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .populate(['from', 'to'])
+      .lean();
+  }
+
+  findById(_id: string): Promise<IFuna> {
+    return this.model.findById(_id).populate(['from', 'to']).lean();
+  }
+
+  async update(_id: string, data: Partial<IFuna>): Promise<IFuna> {
+    const result = await this.model.findByIdAndUpdate(
+      _id,
+      { $set: data } as any,
+      {
+        new: true,
+      },
+    );
+
+    return result.toObject();
   }
 }

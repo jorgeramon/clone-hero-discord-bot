@@ -5,12 +5,14 @@ import { FunaRepository } from '@funa/repository/funa.repository';
 import { FunaService } from '@funa/service/funa.service';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SharedModule } from '@shared/shared.module';
 import { UserModule } from '@user/user.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: FunaModel.name, schema: FunaSchema }]),
     UserModule,
+    SharedModule,
   ],
   providers: [FunaGateway, FunaService, FunaRepository],
   exports: [FunaService],

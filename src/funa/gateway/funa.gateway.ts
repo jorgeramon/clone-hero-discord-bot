@@ -1,21 +1,24 @@
-import { Client, Message, User } from 'discord.js';
-
+import { Command } from '@discord/decorator/command.decorator';
+import { Guards } from '@discord/decorator/guard.decorator';
+import { InjectClient } from '@discord/decorator/inject-client.decorator';
+import { IFunaReport } from '@funa/interface/funa-report.interface';
+import { FunaService } from '@funa/service/funa.service';
+import { Injectable } from '@nestjs/common';
+import { Emotes } from '@shared/enum/emotes.enum';
 import { BotMentionGuard } from '@shared/guard/bot-mention.guard';
 import { ChristmasGuard } from '@shared/guard/christmas.guard';
-import { Command } from '@discord/decorator/command.decorator';
-import { Emotes } from '@shared/enum/emotes.enum';
 import { EmptyMentionGuard } from '@shared/guard/empty-mention.guard';
-import { FunaService } from '@funa/service/funa.service';
-import { Guards } from '@discord/decorator/guard.decorator';
-import { IFunaReport } from '@funa/interface/funa-report.interface';
-import { InjectClient } from '@discord/decorator/inject-client.decorator';
-import { Injectable } from '@nestjs/common';
 import { LupitaGuard } from '@shared/guard/lupita.guard';
+import { Client, Message, User } from 'discord.js';
+import { sample } from 'lodash';
+import * as moment from 'moment';
 
 @Injectable()
 export class FunaGateway {
   @InjectClient()
   client: Client;
+
+  private readonly SECONDS_LIMIT: number = 6;
 
   constructor(private readonly funaService: FunaService) {}
 
@@ -144,6 +147,41 @@ export class FunaGateway {
     await message.reply(
       `el comando es \`!funa\`... estás todo meco ${Emotes.KEK} ${Emotes.KEKW}`,
     );
+  }
+
+  @Command({ name: 'reversa' })
+  async reversa(message: Message): Promise<void> {
+    const latest = await this.funaService.getLastestFromFunado(message.author);
+
+    if (
+      latest &&
+      !latest.reversed &&
+      moment().diff(latest.createdAt, 'seconds') <= this.SECONDS_LIMIT
+    ) {
+      await this.funaService.reverseFuna(latest._id);
+
+      const reverseCards: string[] = [
+        'https://i.ibb.co/BVh6VdX/red-reverse.png',
+        'https://i.ibb.co/LxRWjff/blue-reverse.png',
+      ];
+
+      await message.channel.send(
+        `<@${(<User>latest.from).id}> te regresan tu funa ${
+          Emotes.JARMONIS_RAGE
+        }`,
+        {
+          files: [sample(reverseCards)],
+        },
+      );
+    } else {
+      const emotes: Emotes[] = [
+        Emotes.GHOST_PICARDIA,
+        Emotes.FISH_PICARDIA,
+        Emotes.HENRY_PICARDIA,
+      ];
+
+      await message.channel.send(`**No** ${sample(emotes)}`);
+    }
   }
 
   private createResponseMessage({ isForMe, username, counter }): string {

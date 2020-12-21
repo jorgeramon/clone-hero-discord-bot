@@ -18,6 +18,9 @@ jobs:
           key: node-modules-{{ checksum "yarn.lock" }}
           paths:
             - ~/code/node_modules
+      - run:
+          name: Compilando el código
+          command: yarn build
       - save_cache:
           name: Guardando archivos para el deploy
           key: deployment-{{ .Environment.CIRCLE_SHA1 }}

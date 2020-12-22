@@ -13,6 +13,12 @@ export class UserModel {
 
   @Prop({ required: true, unique: true })
   tag: string;
+
+  @Prop()
+  twitchAccount?: string;
+
+  @Prop()
+  twitchId?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserModel);

@@ -6,6 +6,7 @@ import { MiscellaneousModule } from 'miscellaneous/miscellaneous.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SharedModule } from '@shared/shared.module';
+import { TwitchModule } from 'twitch/twitch.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SharedModule } from '@shared/shared.module';
         uri: configService.get<string>('MONGO_URI'),
       }),
     }),
+    TwitchModule,
     FunaModule,
     MiscellaneousModule,
     SharedModule.forRootGuards(),

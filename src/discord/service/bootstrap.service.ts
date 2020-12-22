@@ -63,6 +63,8 @@ export class BootstrapService implements OnApplicationBootstrap {
             if (actions[i] !== args[i]) {
               return false;
             }
+
+            args.shift();
           }
 
           return true;

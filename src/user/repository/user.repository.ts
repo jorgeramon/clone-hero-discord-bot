@@ -11,19 +11,39 @@ export class UserRepository {
   ) {}
 
   findById(_id: string): Promise<IUser | null> {
-    return this.model.findById(_id).lean<IUser>();
+    return this.model.findById(_id).lean();
   }
 
   findOneById(id: string): Promise<IUser | null> {
-    return this.model.findOne({ id }).lean<IUser>();
+    return this.model.findOne({ id }).lean();
   }
 
   findOneByTag(tag: string): Promise<IUser | null> {
-    return this.model.findOne({ tag }).lean<IUser>();
+    return this.model.findOne({ tag }).lean();
+  }
+
+  findWithTwitchAccount(): Promise<IUser[]> {
+    return this.model.find({ twitchAccount: { $exists: true } }).lean();
+  }
+
+  findOneByTwitchAccount(twitchAccount: string): Promise<IUser | null> {
+    return this.model.findOne({ twitchAccount }).lean();
   }
 
   async create(data: IUser): Promise<IUser> {
     const user: UserDocument = await new this.model(data).save();
     return user.toObject();
+  }
+
+  async update(_id: string, data: Partial<IUser>): Promise<IUser> {
+    const result = await this.model.findByIdAndUpdate(
+      _id,
+      { $set: data } as any,
+      {
+        new: true,
+      },
+    );
+
+    return result.toObject();
   }
 }

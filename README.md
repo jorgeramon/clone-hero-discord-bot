@@ -19,5 +19,11 @@ Para poder ejecutar este bot es necesario contar con:
   * `BOT_TOKEN`: Es el token otorgado por el panel de aplicaciones de Discord al momento de crear un bot. [Puedes consultar aquí para saber cómo hacerlo.](https://www.digitalocean.com/community/tutorials/how-to-build-a-discord-bot-with-node-js-es)
   * `COMMAND_PREFIX`: Es el caracter o caracteres que deben de tener los comandos como prefijo para que este bot pueda ejecutarlos. Por ejemplo con  "!".
   * `MONGO_URI`: URL para conectarse a la base de datos de MongoDB
+  * `TWITCH_CLIENT`: Identificador del cliente de la aplicación de Twitch
+  * `TWITCH_SECRET`: Llave secreta de la aplicación de Twitch
+  * `TWITCH_HOST`: URL donde Twitch enviará las notificaciones
+  * `SERVER_PORT`: Puerto donde el servidor escuchará peticiones
+  * `SERVER_SECRET`: Llave secreta utilizada para autenticación en el servidor
+
 
 4. Iniciar con el comando `npm start`.

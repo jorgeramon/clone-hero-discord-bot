@@ -27,13 +27,17 @@
     "@nestjs/mongoose": "^7.2.0",
     "@nestjs/platform-express": "^7.5.1",
     "@types/mongoose": "^5.10.3",
+    "axios": "^0.21.0",
     "discord.js": "^12.5.1",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
     "mongoose": "^5.11.8",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^6.6.3"
+    "rxjs": "^6.6.3",
+    "twitch": "^4.3.6",
+    "twitch-webhooks": "^4.3.6",
+    "twitch-webhooks-ngrok": "^4.3.6"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.1",

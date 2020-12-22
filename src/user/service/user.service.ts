@@ -11,4 +11,21 @@ export class UserService {
     const user = await this.repository.findOneById(data.id);
     return user || this.repository.create({ id: data.id, tag: data.tag });
   }
+
+  async updateTwitchAccount(
+    discordUser: User,
+    twitchId: string,
+    twitchAccount: string,
+  ): Promise<IUser> {
+    const user: IUser = await this.findOrCreate(discordUser);
+    return this.repository.update(user._id, { twitchId, twitchAccount });
+  }
+
+  findWithTwitchAccount(): Promise<IUser[]> {
+    return this.repository.findWithTwitchAccount();
+  }
+
+  findOneByTwitchAccount(twitchAccount: string): Promise<IUser | null> {
+    return this.repository.findOneByTwitchAccount(twitchAccount);
+  }
 }

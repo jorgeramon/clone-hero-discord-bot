@@ -4,4 +4,6 @@ import { IDocumentTimestamp } from '@shared/interface/document-timestamp.interfa
 export interface IUser extends IDocument, IDocumentTimestamp {
   id: string;
   tag: string;
+  twitchAccount?: string;
+  twitchId?: string;
 }

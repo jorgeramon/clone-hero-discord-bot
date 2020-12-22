@@ -17,7 +17,8 @@
       "@user/*": ["./user/*"],
       "@shared/*": ["./shared/*"],
       "@discord/*": ["./discord/*"],
-      "@miscellaneous/*": ["./miscellaneous/*"]
+      "@miscellaneous/*": ["./miscellaneous/*"],
+      "@twitch/*": ["./twitch/*"]
     }
   }
 }

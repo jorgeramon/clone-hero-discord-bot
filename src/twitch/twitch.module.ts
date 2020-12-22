@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TwitchApiService } from '@twitch/service/twitch-api.service';
-import { TwitchController } from '@twitch/controller/twitter.controller';
+import { TwitchController } from '@twitch/controller/twitch.controller';
 import { TwitchGateway } from '@twitch/gateway/twitch.gateway';
 import { TwitchService } from '@twitch/service/twitch.service';
 import { UserModule } from '@user/user.module';

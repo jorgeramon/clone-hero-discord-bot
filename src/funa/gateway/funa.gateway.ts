@@ -9,6 +9,7 @@ import { BotMentionGuard } from '@shared/guard/bot-mention.guard';
 import { ChristmasGuard } from '@shared/guard/christmas.guard';
 import { EmptyMentionGuard } from '@shared/guard/empty-mention.guard';
 import { LupitaGuard } from '@shared/guard/lupita.guard';
+import { WonkyDayGuard } from '@shared/guard/wonky-day.guard';
 import { Client, Message, User } from 'discord.js';
 import { sample } from 'lodash';
 import * as moment from 'moment';
@@ -149,6 +150,7 @@ export class FunaGateway {
     );
   }
 
+  @Guards(WonkyDayGuard)
   @Command({ name: 'reversa' })
   async reversa(message: Message): Promise<void> {
     const latest = await this.funaService.getLastestFromFunado(message.author);

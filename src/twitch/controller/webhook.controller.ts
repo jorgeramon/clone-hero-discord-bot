@@ -41,7 +41,9 @@ export class WebhookController {
       event.broadcaster_user_id,
     );
 
-    if (twitchStream.game_id !== TwitchGames.CLONE_HERO) {
+    if (
+      Object.values(TwitchGames).indexOf(twitchStream.game_id as any) === -1
+    ) {
       return 'Ok';
     }
 
@@ -66,6 +68,9 @@ export class WebhookController {
       .setAuthor(
         `${twitchUser.display_name} ha comenzado una transmisión en Twitch`,
         twitchUser.profile_image_url,
+      )
+      .setThumbnail(
+        'https://www.awesomescreenshot.com/image/1289541/5837859-1f876f4f0b05a73268783723ad4d1551.png',
       )
       .setImage(thumbnail)
       .setFooter('Twitch Notification Bot')

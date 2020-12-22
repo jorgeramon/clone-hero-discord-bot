@@ -1,14 +1,16 @@
 import { ConfigService } from '@nestjs/config';
+import { ITwitchGame } from '@twitch/interface/twitch-game.interface';
 import { ITwitchStream } from '@twitch/interface/twitch-stream.interface';
 import { ITwitchUser } from '@twitch/interface/twitch-user.interface';
 import { Injectable } from '@nestjs/common';
+import { RefreshAccessToken } from '@twitch/decorator/refresh-access-token.decorator';
 import axios from 'axios';
 
 export type AppAccessToken = { accessToken: string; expiresIn: number };
 
 @Injectable()
 export class TwitchApiService {
-  private appAccessToken: AppAccessToken;
+  private appAccessToken: AppAccessToken = { accessToken: '', expiresIn: 0 };
   private readonly CLIENT_ID: string;
   private readonly CLIENT_SECRET: string;
   private readonly CALLBACK_HOST: string;
@@ -37,6 +39,22 @@ export class TwitchApiService {
     this.appAccessToken = { accessToken: access_token, expiresIn: expires_in };
   }
 
+  @RefreshAccessToken()
+  async fetchGames(name: string): Promise<ITwitchGame> {
+    const response = await axios.get(`${this.HELIX_API}/games`, {
+      params: { name },
+      headers: {
+        'Client-ID': this.CLIENT_ID,
+        Authorization: `Bearer ${this.appAccessToken.accessToken}`,
+      },
+    });
+
+    const { data } = response.data;
+
+    return data;
+  }
+
+  @RefreshAccessToken()
   async fetchCurrentSubscriptions(): Promise<any> {
     const response = await axios.get(
       `${this.HELIX_API}/eventsub/subscriptions`,
@@ -53,6 +71,7 @@ export class TwitchApiService {
     return data;
   }
 
+  @RefreshAccessToken()
   async fetchUserById(id: string): Promise<ITwitchUser | null> {
     const response = await axios.get(`${this.HELIX_API}/users`, {
       params: {
@@ -69,6 +88,7 @@ export class TwitchApiService {
     return data.length ? (data[0] as ITwitchUser) : null;
   }
 
+  @RefreshAccessToken()
   async fetchUserByName(name: string): Promise<ITwitchUser | null> {
     const response = await axios.get(`${this.HELIX_API}/users`, {
       params: {
@@ -85,6 +105,7 @@ export class TwitchApiService {
     return data.length ? (data[0] as ITwitchUser) : null;
   }
 
+  @RefreshAccessToken()
   async fetchStreamByUser(userId: string): Promise<ITwitchStream | null> {
     const response = await axios.get(`${this.HELIX_API}/streams`, {
       params: {
@@ -101,6 +122,7 @@ export class TwitchApiService {
     return data.length ? (data[0] as ITwitchStream) : null;
   }
 
+  @RefreshAccessToken()
   async createSubscription(twitchId: string): Promise<void> {
     await axios.post(
       `${this.HELIX_API}/eventsub/subscriptions`,
@@ -124,5 +146,16 @@ export class TwitchApiService {
         },
       },
     );
+  }
+
+  @RefreshAccessToken()
+  async deleteSubscription(id: string): Promise<void> {
+    await axios.delete(`${this.HELIX_API}/eventsub/subscriptions`, {
+      params: { id },
+      headers: {
+        'Client-ID': this.CLIENT_ID,
+        Authorization: `Bearer ${this.appAccessToken.accessToken}`,
+      },
+    });
   }
 }

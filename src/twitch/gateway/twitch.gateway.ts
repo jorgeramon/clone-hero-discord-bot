@@ -1,5 +1,6 @@
 import { Client, Message } from 'discord.js';
 
+import { Channels } from '@shared/enum/channels.enum';
 import { Command } from '@discord/decorator/command.decorator';
 import { Emotes } from '@shared/enum/emotes.enum';
 import { ITwitchUser } from '@twitch/interface/twitch-user.interface';
@@ -72,7 +73,7 @@ export class TwitchGateway {
       );
 
       await message.reply(
-        `tu cuenta fue registrada ${Emotes.JARMONIS_APPROVES}`,
+        `tu cuenta fue registrada ${Emotes.JARMONIS_APPROVES}. Tus notificaciones apareceran en <#${Channels.STREAMS_EN_VIVO}>`,
       );
     } catch (e) {
       console.error(e);

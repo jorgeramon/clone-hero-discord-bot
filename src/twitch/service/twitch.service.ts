@@ -8,8 +8,5 @@ export class TwitchService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap(): Promise<void> {
     await this.twitchApiService.fetchAppAccessToken();
-
-    //const result = await this.twitchApiService.fetchCurrentSubscriptions();
-    //console.log(result);
   }
 }

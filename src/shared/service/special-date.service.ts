@@ -22,7 +22,9 @@ export class SpecialDateService {
   daysUntilChristmas(): number {
     const now = moment();
     const christmas = moment().month(11).date(25).endOf('day');
-    return christmas.diff(now, 'days');
+    return now.isSameOrBefore(christmas)
+      ? christmas.diff(now, 'days')
+      : christmas.add(1, 'year').diff(now, 'days');
   }
 
   daysUntilWonkyDay(): number {

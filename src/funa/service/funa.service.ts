@@ -24,30 +24,35 @@ export class FunaService {
     });
   }
 
-  async getFunaReport(toDiscord: User, limit: number): Promise<IFunaReport[]> {
+  async getFunaReport(
+    toDiscord: User,
+    limit: number,
+    year: number,
+  ): Promise<IFunaReport[]> {
     const user: IUser = await this.userService.findOrCreate(toDiscord);
-    return this.repository.getFunaReport(user._id, limit);
+    return this.repository.getFunaReport(user._id, limit, year);
   }
 
   async getFunatorReport(
     fromDiscord: User,
     limit: number,
+    year: number,
   ): Promise<IFunaReport[]> {
     const user: IUser = await this.userService.findOrCreate(fromDiscord);
-    return this.repository.getFunatorReport(user._id, limit);
+    return this.repository.getFunatorReport(user._id, limit, year);
   }
 
-  getTopFunasReport(limit: number): Promise<IFunaReport[]> {
-    return this.repository.getTopFunasReport(limit);
+  getTopFunasReport(limit: number, year: number): Promise<IFunaReport[]> {
+    return this.repository.getTopFunasReport(limit, year);
   }
 
-  getTopFunatorsReport(limit: number): Promise<IFunaReport[]> {
-    return this.repository.getTopFunatorsReport(limit);
+  getTopFunatorsReport(limit: number, year: number): Promise<IFunaReport[]> {
+    return this.repository.getTopFunatorsReport(limit, year);
   }
 
-  async getFunasByUser(toDiscord: User): Promise<IFuna[]> {
+  async getFunasByUser(toDiscord: User, year: number): Promise<IFuna[]> {
     const to: IUser = await this.userService.findOrCreate(toDiscord);
-    return this.repository.getFunasByUser(to._id);
+    return this.repository.getFunasByUser(to._id, year);
   }
 
   async getLastestFromFunado(toDiscord: User): Promise<IFuna> {

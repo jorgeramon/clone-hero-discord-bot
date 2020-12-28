@@ -4,6 +4,7 @@ import { FunaDocument, FunaModel } from '@funa/schema/funa.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Collections } from '@shared/enum/colllections.enum';
+import * as moment from 'moment';
 import { Model, Types } from 'mongoose';
 
 @Injectable()
@@ -17,12 +18,27 @@ export class FunaRepository {
     return funa.toObject();
   }
 
-  async getFunatorReport(from: string, limit: number): Promise<IFunaReport[]> {
+  async getFunatorReport(
+    from: string,
+    limit: number,
+    year: number,
+  ): Promise<IFunaReport[]> {
     const result = await this.model.aggregate<IFunaReport>([
+      {
+        $project: {
+          to: 1,
+          auto: 1,
+          from: 1,
+          reversed: 1,
+          _id: 1,
+          year: { $year: '$createdAt' },
+        },
+      },
       {
         $match: {
           from,
           auto: false,
+          year,
         },
       },
       {
@@ -53,8 +69,19 @@ export class FunaRepository {
     return result;
   }
 
-  async getTopFunasReport(limit: number): Promise<IFunaReport[]> {
+  async getTopFunasReport(limit: number, year: number): Promise<IFunaReport[]> {
     const result = await this.model.aggregate<IFunaReport>([
+      {
+        $project: {
+          to: 1,
+          auto: 1,
+          from: 1,
+          reversed: 1,
+          _id: 1,
+          year: { $year: '$createdAt' },
+        },
+      },
+      { $match: { year } },
       {
         $group: {
           _id: '$to',
@@ -83,10 +110,23 @@ export class FunaRepository {
     return result;
   }
 
-  async getTopFunatorsReport(limit: number): Promise<IFunaReport[]> {
+  async getTopFunatorsReport(
+    limit: number,
+    year: number,
+  ): Promise<IFunaReport[]> {
     const result = await this.model.aggregate<IFunaReport>([
       {
-        $match: { auto: false },
+        $project: {
+          to: 1,
+          auto: 1,
+          from: 1,
+          reversed: 1,
+          _id: 1,
+          year: { $year: '$createdAt' },
+        },
+      },
+      {
+        $match: { auto: false, year },
       },
       {
         $group: {
@@ -116,12 +156,27 @@ export class FunaRepository {
     return result;
   }
 
-  async getFunaReport(to: string, limit: number): Promise<IFunaReport[]> {
+  async getFunaReport(
+    to: string,
+    limit: number,
+    year: number,
+  ): Promise<IFunaReport[]> {
     const result = await this.model.aggregate<IFunaReport>([
+      {
+        $project: {
+          to: 1,
+          auto: 1,
+          from: 1,
+          reversed: 1,
+          _id: 1,
+          year: { $year: '$createdAt' },
+        },
+      },
       {
         $match: {
           to,
           auto: false,
+          year,
         },
       },
       {
@@ -152,8 +207,16 @@ export class FunaRepository {
     return result;
   }
 
-  getFunasByUser(to: string): Promise<IFuna[]> {
-    return this.model.find({ to: Types.ObjectId(to) } as any).lean();
+  getFunasByUser(to: string, year: number): Promise<IFuna[]> {
+    const initInterval = moment().year(year).startOf('year');
+    const endInterval = moment().year(year).endOf('year');
+
+    return this.model
+      .find({
+        to: Types.ObjectId(to),
+        createdAt: { $gte: initInterval, $lte: endInterval },
+      } as any)
+      .lean();
   }
 
   getLatestFromFunado(to: string): Promise<IFuna> {

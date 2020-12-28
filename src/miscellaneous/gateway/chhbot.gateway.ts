@@ -19,9 +19,9 @@ export class ChhBotGateway {
       `\`${prefix}navidad\`: Muestra los días que faltan para navidad ${Emotes.PADORUUCHH}.`,
       `\`${prefix}wonky\`: Muestra los días que faltan para el "Martes de funar a Wonky" ${Emotes.KEK}.`,
       `\`${prefix}funa [@usuario]\`: Funa a los usuarios mencionados (puede ser 1 o más). NO ABUSES DE ESTE COMANDO HDTPM ${Emotes.JARMONIS_RAGE}.`,
-      `\`${prefix}funas [@usuario]\`: Muestra cuántas veces ha sido funado el usuario mencionado o tú si no mencionas a nadie.`,
-      `\`${prefix}funados [cantidad o @usuario]\`: Muestra los más funados del server, los 3 primeros por defecto o la cantidad especificada en el comando (máximo 15). Si mencionas a alguien te dirá el resumen de sus funaciones.`,
-      `\`${prefix}funadores [cantidad o @usuario]\`: Muestra a los más HDP del server, los 3 primeros por defecto o la cantidad especificada en el comando (máximo 15). Si mencionas a alguien te dirá el resumen de sus funaciones.`,
+      `\`${prefix}funas [@usuario] [año]\`: Muestra cuántas veces ha sido funado el usuario mencionado o tú si no mencionas a nadie. También puedes filtrar la información por un año en específico.`,
+      `\`${prefix}funados [cantidad] [año]\`: Muestra los más funados del server, los 3 primeros por defecto o la cantidad especificada en el comando (máximo 15). También puedes filtrar la información por un año en específico.`,
+      `\`${prefix}funadores [cantidad] [año]\`: Muestra a los más HDP del server, los 3 primeros por defecto o la cantidad especificada en el comando (máximo 15). También puedes filtrar la información por un año en específico.`,
       `\`${prefix}reversa\`: Regresas tú última funa, solo tienes 5 segundos para reaccionar, crack ${Emotes.FISH_PICARDIA}`,
     ];
 

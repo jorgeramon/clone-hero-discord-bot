@@ -4,7 +4,7 @@ import {
   GUARD_DECORATOR,
   PREFIX_DECORATOR,
 } from '@discord/constant/decorator';
-import { Client, Message } from 'discord.js';
+import { Client, Message, MessageMentions } from 'discord.js';
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
 import { Injectable, OnApplicationBootstrap, Type } from '@nestjs/common';
 
@@ -45,7 +45,9 @@ export class BootstrapService implements OnApplicationBootstrap {
       }
 
       const command_body: string = message.content.slice(prefix.length);
-      const args: string[] = command_body.split(' ');
+      const args: string[] = command_body
+        .split(' ')
+        .filter((arg: string) => !MessageMentions.USERS_PATTERN.test(arg));
       const commandName: string = args.shift().toLowerCase();
       const commandInstances: CommandInstance[] = commands.filter(
         (command: CommandInstance) => command.name === commandName,

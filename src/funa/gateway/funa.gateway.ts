@@ -20,16 +20,29 @@ export class FunaGateway {
   client: Client;
 
   private readonly SECONDS_LIMIT: number = 6;
+  private readonly BASE_YEAR = 2019;
+  private readonly STARTER_YEAR = 2010;
 
   constructor(private readonly funaService: FunaService) {}
 
   @Command({ name: 'funadores' })
   async funadores(message: Message, args: string[]): Promise<void> {
     let limit: number = parseInt(args[0]);
+    let year: number =
+      limit >= this.STARTER_YEAR ? limit : parseInt(args[1]) || moment().year();
+
     limit = limit > 0 && limit <= 15 ? limit : 3;
+
+    if (this.isYearInvalid(year)) {
+      await message.reply(
+        `muy garsioso buscando en el año ${year} ${Emotes.JARMONIS_RAGE}`,
+      );
+      return;
+    }
 
     const funas: IFunaReport[] = await this.funaService.getTopFunatorsReport(
       limit > 0 && limit <= 15 ? limit : 3,
+      year,
     );
 
     const top: number = limit > funas.length ? funas.length : limit;
@@ -37,15 +50,27 @@ export class FunaGateway {
     const messages: string[] = [];
 
     if (!funas.length) {
-      messages.push(`Aún no hay funadores ${Emotes.FISH_DEPRESION}`);
+      messages.push(
+        `No hay funadores${this.customYearMessage(year)} ${
+          Emotes.FISH_DEPRESION
+        }`,
+      );
     } else if (funas.length === 1) {
       const { user, count } = funas[0];
       const discordUser: User = await this.client.users.fetch(user.id);
       messages.push(
-        `${discordUser.username} es el funador más HDP del server con **${count}** funaciones ${Emotes.TOMK}`,
+        `${
+          discordUser.username
+        } es el funador más HDP del server con **${count}** funaciones${this.customYearMessage(
+          year,
+        )} ${Emotes.TOMK}`,
       );
     } else {
-      messages.push(`Top ${top} funadores más HDP del server ${Emotes.TOMK}`);
+      messages.push(
+        `Top ${top} funadores más HDP del server${this.customYearMessage(
+          year,
+        )} ${Emotes.TOMK}`,
+      );
 
       for (let i = 1; i <= funas.length; i++) {
         const { user, count } = funas[i - 1];
@@ -62,10 +87,21 @@ export class FunaGateway {
   @Command({ name: 'funados' })
   async funados(message: Message, args: string[]): Promise<void> {
     let limit: number = parseInt(args[0]);
+    let year: number =
+      limit >= this.STARTER_YEAR ? limit : parseInt(args[1]) || moment().year();
+
     limit = limit > 0 && limit <= 15 ? limit : 3;
+
+    if (this.isYearInvalid(year)) {
+      await message.reply(
+        `muy garsioso buscando en el año ${year} ${Emotes.JARMONIS_RAGE}`,
+      );
+      return;
+    }
 
     const funas: IFunaReport[] = await this.funaService.getTopFunasReport(
       limit > 0 && limit <= 15 ? limit : 3,
+      year,
     );
 
     const top: number = limit > funas.length ? funas.length : limit;
@@ -73,15 +109,27 @@ export class FunaGateway {
     const messages: string[] = [];
 
     if (!funas.length) {
-      messages.push(`Aún no hay funados ${Emotes.FISH_DEPRESION}`);
+      messages.push(
+        `No hay funados${this.customYearMessage(year)} ${
+          Emotes.FISH_DEPRESION
+        }`,
+      );
     } else if (funas.length === 1) {
       const { user, count } = funas[0];
       const discordUser: User = await this.client.users.fetch(user.id);
       messages.push(
-        `${discordUser.username} es el más funado del server con **${count}** funaciones ${Emotes.KEK}`,
+        `${
+          discordUser.username
+        } es el más funado del server con **${count}** funaciones${this.customYearMessage(
+          year,
+        )} ${Emotes.KEK}`,
       );
     } else {
-      messages.push(`Top ${top} más funados del server ${Emotes.KEK}`);
+      messages.push(
+        `Top ${top} más funados del server${this.customYearMessage(year)} ${
+          Emotes.KEK
+        }`,
+      );
 
       for (let i = 1; i <= funas.length; i++) {
         const { user, count } = funas[i - 1];
@@ -97,21 +145,34 @@ export class FunaGateway {
 
   @Guards(BotMentionGuard)
   @Command({ name: 'funas' })
-  async funas(message: Message): Promise<void> {
+  async funas(message: Message, args: string[]): Promise<void> {
+    let year: number = parseInt(args[0]) || moment().year();
+
     let data = {
       username: null,
       isForMe: false,
       counter: 0,
+      year,
     };
 
+    if (this.isYearInvalid(year)) {
+      await message.reply(
+        `muy garsioso buscando en el año ${year} ${Emotes.JARMONIS_RAGE}`,
+      );
+      return;
+    }
+
     if (!message.mentions.users.size) {
-      const documents = await this.funaService.getFunasByUser(message.author);
+      const documents = await this.funaService.getFunasByUser(
+        message.author,
+        year,
+      );
 
       data.isForMe = true;
       data.counter = documents.length;
     } else {
       const user = message.mentions.users.first();
-      const documents = await this.funaService.getFunasByUser(user);
+      const documents = await this.funaService.getFunasByUser(user, year);
 
       data.username = user.username;
       data.counter = documents.length;
@@ -186,21 +247,37 @@ export class FunaGateway {
     }
   }
 
-  private createResponseMessage({ isForMe, username, counter }): string {
+  private createResponseMessage({ isForMe, username, counter, year }): string {
     const times = counter > 1 ? 'veces' : 'vez';
 
     switch (true) {
       case isForMe && !counter:
-        return `no has sido funado crack ${Emotes.JARMONIS_APPROVES}`;
+        return `no has sido funado${this.customYearMessage(year)} crack ${
+          Emotes.JARMONIS_APPROVES
+        }`;
 
       case isForMe && counter > 0:
-        return `has sido funado **${counter}** ${times} ${Emotes.JARMONIS}`;
+        return `has sido funado **${counter}** ${times}${this.customYearMessage(
+          year,
+        )} ${Emotes.JARMONIS}`;
 
       case !isForMe && !counter:
-        return `${username} no ha sido funado ${Emotes.JARMONIS_APPROVES}`;
+        return `${username} no ha sido funado${this.customYearMessage(year)} ${
+          Emotes.JARMONIS_APPROVES
+        }`;
 
       case !isForMe && counter > 0:
-        return `${username} ha sido funado **${counter}** ${times} ${Emotes.JARMONIS}`;
+        return `${username} ha sido funado **${counter}** ${times}${this.customYearMessage(
+          year,
+        )} ${Emotes.JARMONIS}`;
     }
+  }
+
+  private customYearMessage(year: number): string {
+    return year === moment().year() ? '' : ` en el año ${year}`;
+  }
+
+  private isYearInvalid(year: number): boolean {
+    return year < this.BASE_YEAR || year > moment().year() + 1;
   }
 }

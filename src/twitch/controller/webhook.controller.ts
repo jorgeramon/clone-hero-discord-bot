@@ -10,6 +10,7 @@ import { TwitchApiService } from '@twitch/service/twitch-api.service';
 import { IUser } from '@user/interface/user.interface';
 import { UserService } from '@user/service/user.service';
 import { MessageEmbed } from 'discord.js';
+import { v4 } from 'uuid';
 
 @Controller('/twitch/webhook')
 export class WebhookController {
@@ -55,9 +56,11 @@ export class WebhookController {
       twitchUser.login,
     );
 
-    const thumbnail = twitchStream.thumbnail_url
+    const thumbnail = `${twitchStream.thumbnail_url
       .replace('{width}', '500')
-      .replace('{height}', '280');
+      .replace('{height}', '280')}?uuid=${v4()}`;
+
+    console.log(twitchUser.display_name, thumbnail);
 
     const message = new MessageEmbed()
       .setColor('#0099ff')

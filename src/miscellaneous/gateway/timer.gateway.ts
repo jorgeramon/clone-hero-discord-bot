@@ -1,15 +1,19 @@
 import { Command } from '@discord/decorator/command.decorator';
-import { Emotes } from '@shared/enum/emotes.enum';
 import { Injectable } from '@nestjs/common';
-import { Message } from 'discord.js';
+import { Emotes } from '@shared/enum/emotes.enum';
+import { Environments } from '@shared/enum/environments.enum';
 import { SpecialDateService } from '@shared/service/special-date.service';
+import { Message } from 'discord.js';
 import { sample } from 'lodash';
 
 @Injectable()
 export class TimerGateway {
   constructor(private readonly specialDateService: SpecialDateService) {}
 
-  @Command({ name: 'navidad' })
+  @Command({
+    name: 'navidad',
+    description: 'Muestra los días que faltan para navidad',
+  })
   async daysUntilChristmas(message: Message): Promise<void> {
     if (this.specialDateService.isChristmas()) {
       await message.channel.send(`HOY ES NAVIDAD ${Emotes.PADORUUCHH} 🎄 🎁`, {
@@ -27,7 +31,12 @@ export class TimerGateway {
     }
   }
 
-  @Command({ name: 'wonky' })
+  @Command({
+    name: 'wonky',
+    env: Environments.CHH,
+    description:
+      'Muestra los días que faltan para el "Martes de funar a Wonky"',
+  })
   async daysUntilWonkyDay(message: Message): Promise<void> {
     if (this.specialDateService.isWonkyDay()) {
       const gifs = [

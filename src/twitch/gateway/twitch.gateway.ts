@@ -1,14 +1,13 @@
-import { Client, Message } from 'discord.js';
-
-import { Channels } from '@shared/enum/channels.enum';
 import { Command } from '@discord/decorator/command.decorator';
-import { Emotes } from '@shared/enum/emotes.enum';
-import { ITwitchUser } from '@twitch/interface/twitch-user.interface';
-import { IUser } from '@user/interface/user.interface';
 import { InjectClient } from '@discord/decorator/inject-client.decorator';
 import { Injectable } from '@nestjs/common';
-import { TwitchApiService } from '@twitch/service/twitch-api.service';
+import { Channels } from '@shared/enum/channels.enum';
+import { Emotes } from '@shared/enum/emotes.enum';
+import { ITwitchUser } from '@twitch/interface/twitch-user.interface';
+import { TwitchService } from '@twitch/service/twitch.service';
+import { IUser } from '@user/interface/user.interface';
 import { UserService } from '@user/service/user.service';
+import { Client, Message } from 'discord.js';
 
 @Injectable()
 export class TwitchGateway {
@@ -16,11 +15,16 @@ export class TwitchGateway {
   client: Client;
 
   constructor(
-    private readonly twitchApiService: TwitchApiService,
+    private readonly twitchApiService: TwitchService,
     private readonly userService: UserService,
   ) {}
 
-  @Command({ name: 'twitch' })
+  @Command({
+    name: 'twitch',
+    usage: '[usuario de twitch]',
+    description:
+      'Permite registrar la cuenta de Twitch para notificar las transmisiones de esa cuenta.',
+  })
   async addTwitchAccount(message: Message, args: string[]): Promise<void> {
     try {
       const user: IUser = await this.userService.findOrCreate(message.author);

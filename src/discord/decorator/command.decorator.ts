@@ -4,6 +4,10 @@ export type CommandOptions = {
   name: string;
   action?: string;
   actions?: string[];
+  description?: string;
+  usage?: string;
+  isAdmin?: boolean;
+  env?: string;
 };
 
 export const Command = (options: CommandOptions): MethodDecorator => (

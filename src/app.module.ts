@@ -11,13 +11,7 @@ import { TwitchModule } from 'twitch/twitch.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    DiscordModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        token: configService.get<string>('BOT_TOKEN'),
-        prefix: configService.get<string>('COMMAND_PREFIX'),
-      }),
-    }),
+    DiscordModule,
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({

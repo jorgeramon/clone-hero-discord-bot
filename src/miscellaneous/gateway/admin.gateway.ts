@@ -4,6 +4,7 @@ import { Client, Message, User } from 'discord.js';
 
 import { Command } from '@discord/decorator/command.decorator';
 import { Emotes } from '@shared/enum/emotes.enum';
+import { Environments } from '@shared/enum/environments.enum';
 import { Guards } from '@discord/decorator/guard.decorator';
 import { InjectClient } from '@discord/decorator/inject-client.decorator';
 import { Injectable } from '@nestjs/common';
@@ -15,7 +16,13 @@ export class AdminGateway {
   client: Client;
 
   @Guards(IsAdminGuard)
-  @Command({ name: 'rg' })
+  @Command({
+    name: 'rg',
+    isAdmin: true,
+    env: Environments.CHH,
+    usage: '[usuario]',
+    description: 'Muestra la fecha de registro de un usuario en particular.',
+  })
   async rg(message: Message, args: string[]): Promise<void> {
     if (!args.length) {
       await message.channel.send(this.createResponseMessage(message.author));

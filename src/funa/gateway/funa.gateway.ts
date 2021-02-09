@@ -25,7 +25,12 @@ export class FunaGateway {
 
   constructor(private readonly funaService: FunaService) {}
 
-  @Command({ name: 'funadores' })
+  @Command({
+    name: 'funadores',
+    usage: '[cantidad] [año]',
+    description:
+      'Muestra a los más HDP del server, los 3 primeros por defecto o la cantidad especificada en el comando (máximo 15). También puedes filtrar la información por un año en específico.',
+  })
   async funadores(message: Message, args: string[]): Promise<void> {
     let limit: number = parseInt(args[0]);
     let year: number =
@@ -84,7 +89,12 @@ export class FunaGateway {
     await message.channel.send(messages);
   }
 
-  @Command({ name: 'funados' })
+  @Command({
+    name: 'funados',
+    usage: '[cantidad] [año]',
+    description:
+      'Muestra los más funados del server, los 3 primeros por defecto o la cantidad especificada en el comando (máximo 15). También puedes filtrar la información por un año en específico.',
+  })
   async funados(message: Message, args: string[]): Promise<void> {
     let limit: number = parseInt(args[0]);
     let year: number =
@@ -144,7 +154,12 @@ export class FunaGateway {
   }
 
   @Guards(BotMentionGuard)
-  @Command({ name: 'funas' })
+  @Command({
+    name: 'funas',
+    usage: '[@mencion] [año]',
+    description:
+      'Muestra cuántas veces ha sido funado el usuario mencionado o tú si no mencionas a nadie. También puedes filtrar la información por un año en específico.',
+  })
   async funas(message: Message, args: string[]): Promise<void> {
     let year: number = parseInt(args[0]) || moment().year();
 
@@ -186,7 +201,12 @@ export class FunaGateway {
   }
 
   @Guards(ChristmasGuard, LupitaGuard, BotMentionGuard, EmptyMentionGuard)
-  @Command({ name: 'funa' })
+  @Command({
+    name: 'funa',
+    usage: '[@mencion]',
+    description:
+      'Funa a los usuarios mencionados (puede ser 1 o más). NO ABUSES DE ESTE COMANDO HDTPM.',
+  })
   async funa(message: Message): Promise<void> {
     await Promise.all(
       message.mentions.users.map((user: User) =>
@@ -212,7 +232,11 @@ export class FunaGateway {
   }
 
   @Guards(WonkyDayGuard)
-  @Command({ name: 'reversa' })
+  @Command({
+    name: 'reversa',
+    description:
+      'Regresas tú última funa, solo tienes 5 segundos para reaccionar, crack',
+  })
   async reversa(message: Message): Promise<void> {
     const latest = await this.funaService.getLastestFromFunado(message.author);
 

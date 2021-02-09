@@ -4,13 +4,14 @@ import {
   GUARD_DECORATOR,
   PREFIX_DECORATOR,
 } from '@discord/constant/decorator';
-import { Client, Message, MessageMentions } from 'discord.js';
-import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
-import { Injectable, OnApplicationBootstrap, Type } from '@nestjs/common';
-
-import { ClientService } from '@discord/service/client.service';
 import { IGuard } from '@discord/interface/guard.interface';
+import { DiscordService } from '@discord/service/discord.service';
+import { Injectable, OnApplicationBootstrap, Type } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { Environments } from '@shared/enum/environments.enum';
+import { Client, Message, MessageMentions } from 'discord.js';
 import { isObject } from 'lodash';
 
 export type CommandInstance = {
@@ -18,28 +19,44 @@ export type CommandInstance = {
   instance: any;
   method: string;
   actions: string[];
+  description?: string;
+  usage?: string;
+  isAdmin?: boolean;
 };
+
+export const publicDocumentation: string[] = [];
+export const adminDocumentation: string[] = [];
 
 @Injectable()
 export class BootstrapService implements OnApplicationBootstrap {
+  private readonly environment: Environments;
+
   constructor(
     private readonly discoveryService: DiscoveryService,
     private readonly metadataScanner: MetadataScanner,
-    private readonly clientService: ClientService,
+    private readonly discordService: DiscordService,
     private readonly moduleRef: ModuleRef,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.environment = configService.get<string>('ENV') as Environments;
+  }
 
-  onApplicationBootstrap(): void {
+  async onApplicationBootstrap(): Promise<void> {
+    await this.discordService.connect();
+
     const commands: CommandInstance[] = this.getCommands();
 
-    const client: Client = this.clientService.getDiscordClient();
+    publicDocumentation.push(...this.getPublicDocumentation(commands));
+    adminDocumentation.push(...this.getAdminDocumentation(commands));
+
+    const client: Client = this.discordService.getDiscordClient();
 
     client.on('ready', () => {
       console.log('> Conectado a Discord');
     });
 
     client.on('message', async (message: Message) => {
-      const { prefix } = this.clientService;
+      const { prefix } = this.discordService;
       if (message.author.bot || !message.content.startsWith(prefix)) {
         return;
       }
@@ -57,29 +74,20 @@ export class BootstrapService implements OnApplicationBootstrap {
         return;
       }
 
-      const commandInstance: CommandInstance = commandInstances
-        .filter((commandInstance: CommandInstance) => {
+      const commandInstance: CommandInstance = commandInstances.find(
+        (commandInstance: CommandInstance) => {
           const { actions } = commandInstance;
 
-          for (let i = 0; i < actions.length; i++) {
-            if (actions[i] !== args[i]) {
-              return false;
-            }
-
-            args.shift();
+          if (args.length < actions.length) {
+            return false;
           }
 
-          return true;
-        })
-        .reduce((accumulator: CommandInstance, value: CommandInstance) => {
-          if (!accumulator) {
-            return value;
-          } else if (accumulator.actions.length < value.actions.length) {
-            return value;
-          } else {
-            return accumulator;
-          }
-        }, null);
+          const $args: string = args.join(' ');
+          const $actions: string = actions.join(' ');
+
+          return $actions.startsWith($args);
+        },
+      );
 
       if (!commandInstance) {
         return;
@@ -143,13 +151,28 @@ export class BootstrapService implements OnApplicationBootstrap {
 
     this.scanPropertiesMetadata(instance);
 
-    const { name, action, actions } = commandMetadata;
+    const {
+      name,
+      action,
+      actions,
+      description,
+      usage,
+      isAdmin,
+      env,
+    } = commandMetadata;
+
+    if (env && env !== this.environment) {
+      return null;
+    }
 
     return {
       name,
       instance,
       method,
       actions: action ? [action] : actions || [],
+      description,
+      usage,
+      isAdmin,
     };
   }
 
@@ -177,7 +200,7 @@ export class BootstrapService implements OnApplicationBootstrap {
     );
 
     if (metadata) {
-      instance[propertyKey] = this.clientService.getDiscordClient();
+      instance[propertyKey] = this.discordService.getDiscordClient();
     }
   }
 
@@ -189,7 +212,37 @@ export class BootstrapService implements OnApplicationBootstrap {
     );
 
     if (metadata) {
-      instance[propertyKey] = this.clientService.prefix;
+      instance[propertyKey] = this.discordService.prefix;
     }
+  }
+
+  private getDocumentation(commands: CommandInstance[]): string[] {
+    const { prefix } = this.discordService;
+
+    return commands
+      .filter(
+        (command: CommandInstance): boolean =>
+          !!command.name && !!command.description,
+      )
+      .map(
+        (command: CommandInstance): string =>
+          `\`${prefix}${command.name}${
+            command.actions.length ? ' ' + command.actions.join(' ') : ''
+          }${command.usage ? ' ' + command.usage : ''}\`: ${
+            command.description
+          }`,
+      );
+  }
+
+  private getPublicDocumentation(commands: CommandInstance[]): string[] {
+    return this.getDocumentation(
+      commands.filter((command: CommandInstance): boolean => !command.isAdmin),
+    );
+  }
+
+  private getAdminDocumentation(commands: CommandInstance[]): string[] {
+    return this.getDocumentation(
+      commands.filter((command: CommandInstance): boolean => command.isAdmin),
+    );
   }
 }

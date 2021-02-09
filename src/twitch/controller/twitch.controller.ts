@@ -1,11 +1,11 @@
 import { Controller, Delete, Get, Param, Query } from '@nestjs/common';
 import { ITwitchGame } from '@twitch/interface/twitch-game.interface';
 import { ITwitchSubscription } from '@twitch/interface/twitch-subscription.interface';
-import { TwitchApiService } from '@twitch/service/twitch-api.service';
+import { TwitchService } from '@twitch/service/twitch.service';
 
 @Controller('twitch')
 export class TwitchController {
-  constructor(private readonly twitchApiService: TwitchApiService) {}
+  constructor(private readonly twitchApiService: TwitchService) {}
 
   @Get()
   helloWorld(): string {

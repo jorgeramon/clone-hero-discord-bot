@@ -6,7 +6,7 @@ import { ITwitchNotification } from '@twitch/interface/twitch-notification.inter
 import { ITwitchStream } from '@twitch/interface/twitch-stream.interface';
 import { ITwitchUser } from '@twitch/interface/twitch-user.interface';
 import { ITwitchVerification } from '@twitch/interface/twitch-verification.interface';
-import { TwitchApiService } from '@twitch/service/twitch-api.service';
+import { TwitchService } from '@twitch/service/twitch.service';
 import { IUser } from '@user/interface/user.interface';
 import { UserService } from '@user/service/user.service';
 import { MessageEmbed } from 'discord.js';
@@ -16,7 +16,7 @@ import { v4 } from 'uuid';
 export class WebhookController {
   constructor(
     private readonly twitchGateway: TwitchGateway,
-    private readonly twitchApiService: TwitchApiService,
+    private readonly twitchApiService: TwitchService,
     private readonly userService: UserService,
   ) {}
 

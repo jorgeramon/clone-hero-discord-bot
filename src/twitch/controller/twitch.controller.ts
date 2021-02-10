@@ -30,13 +30,11 @@ export class TwitchController {
   @Delete('subscriptions/:id')
   async deleteSubscription(@Param('id') id: string): Promise<string> {
     await this.twitchService.deleteSubscription(id);
-    return 'Ok';
+    return `Deleted subscription with id ${id}`;
   }
 
   @Delete('subscriptions')
   async deleteSubscriptions(): Promise<string> {
-    console.log('Deleting all subscriptions');
-
     const subscriptions = await this.twitchService.fetchCurrentSubscriptions();
 
     await Promise.all(
@@ -45,13 +43,11 @@ export class TwitchController {
       ),
     );
 
-    return 'Ok';
+    return `Deleted ${subscriptions.length} subscriptions`;
   }
 
   @Put('subscriptions')
   async updateSubscriptions(): Promise<string> {
-    console.log('Updating all subscriptions');
-
     const subscriptions = await this.twitchService.fetchCurrentSubscriptions();
 
     await Promise.all(
@@ -62,12 +58,10 @@ export class TwitchController {
 
     const users: IUser[] = await this.userService.findWithTwitchAccount();
 
-    console.log(users);
-
     await Promise.all(
       users.map((user) => this.twitchService.createSubscription(user.twitchId)),
     );
 
-    return 'Ok';
+    return `Updated ${users.length} subscriptions`;
   }
 }

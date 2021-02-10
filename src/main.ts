@@ -25,8 +25,6 @@ async function bootstrap() {
   await app.listen(port);
 
   console.log(`> Servidor escuchando puerto ${port}`);
-  console.log(`> Conectado a la base de datos ${process.env.MONGO_URI}`);
-  console.log(`> Servidor ${process.env.ENV}`);
 }
 
 bootstrap();

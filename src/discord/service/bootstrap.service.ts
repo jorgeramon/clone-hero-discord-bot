@@ -38,7 +38,7 @@ export class BootstrapService implements OnApplicationBootstrap {
     private readonly moduleRef: ModuleRef,
     private readonly configService: ConfigService,
   ) {
-    this.environment = configService.get<string>('ENV') as Environments;
+    this.environment = this.configService.get<string>('ENV') as Environments;
   }
 
   async onApplicationBootstrap(): Promise<void> {

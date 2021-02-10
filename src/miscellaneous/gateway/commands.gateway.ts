@@ -9,14 +9,12 @@ import { Injectable } from '@nestjs/common';
 import { IsAdminGuard } from '@shared/guard/is-admin.guard';
 import { Message } from 'discord.js';
 
-const { ENV } = process.env;
-
 @Injectable()
 export class CommandsGateway {
   @InjectPrefix()
   prefix: string;
 
-  @Command({ name: ENV, action: 'comandos' })
+  @Command({ name: 'bot', action: 'comandos' })
   async showPublicCommands(message: Message, args: string[]): Promise<void> {
     await message.channel.send(
       publicDocumentation.length
@@ -26,7 +24,7 @@ export class CommandsGateway {
   }
 
   @Guards(IsAdminGuard)
-  @Command({ name: ENV, actions: ['comandos', 'admin'] })
+  @Command({ name: 'bot', actions: ['comandos', 'admin'] })
   async showAdminCommands(message: Message, args: string[]): Promise<void> {
     await message.channel.send(
       adminDocumentation.length

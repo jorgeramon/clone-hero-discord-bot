@@ -1,8 +1,7 @@
-import * as moment from 'moment';
-
-import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import * as moment from 'moment';
+import { AppModule } from './app.module';
 
 moment.locale('es', {
   months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split(
@@ -26,6 +25,8 @@ async function bootstrap() {
   await app.listen(port);
 
   console.log(`> Servidor escuchando puerto ${port}`);
+  console.log(`> Conectado a la base de datos ${process.env.MONGO_URI}`);
+  console.log(`> Servidor ${process.env.ENV}`);
 }
 
 bootstrap();

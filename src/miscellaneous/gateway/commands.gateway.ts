@@ -9,12 +9,14 @@ import { Injectable } from '@nestjs/common';
 import { IsAdminGuard } from '@shared/guard/is-admin.guard';
 import { Message } from 'discord.js';
 
+const { ENV } = process.env;
+
 @Injectable()
-export class ChhBotGateway {
+export class CommandsGateway {
   @InjectPrefix()
   prefix: string;
 
-  @Command({ name: 'chhbot', action: 'comandos' })
+  @Command({ name: ENV, action: 'comandos' })
   async showPublicCommands(message: Message, args: string[]): Promise<void> {
     await message.channel.send(
       publicDocumentation.length
@@ -24,7 +26,7 @@ export class ChhBotGateway {
   }
 
   @Guards(IsAdminGuard)
-  @Command({ name: 'chhbot', actions: ['comandos', 'admin'] })
+  @Command({ name: ENV, actions: ['comandos', 'admin'] })
   async showAdminCommands(message: Message, args: string[]): Promise<void> {
     await message.channel.send(
       adminDocumentation.length

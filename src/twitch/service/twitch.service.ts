@@ -1,9 +1,10 @@
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { RefreshAccessToken } from '@twitch/decorator/refresh-access-token.decorator';
 import { ITwitchGame } from '@twitch/interface/twitch-game.interface';
 import { ITwitchStream } from '@twitch/interface/twitch-stream.interface';
+import { ITwitchSubscription } from '@twitch/interface/twitch-subscription.interface';
 import { ITwitchUser } from '@twitch/interface/twitch-user.interface';
-import { Injectable } from '@nestjs/common';
-import { RefreshAccessToken } from '@twitch/decorator/refresh-access-token.decorator';
 import axios from 'axios';
 
 export type AppAccessToken = { accessToken: string; expiresIn: number };
@@ -55,7 +56,7 @@ export class TwitchService {
   }
 
   @RefreshAccessToken()
-  async fetchCurrentSubscriptions(): Promise<any> {
+  async fetchCurrentSubscriptions(): Promise<ITwitchSubscription[]> {
     const response = await axios.get(
       `${this.HELIX_API}/eventsub/subscriptions`,
       {

@@ -1,4 +1,12 @@
-export enum Channels {
+export enum CHHChannels {
   STREAMS_EN_VIVO = '664544771749969940',
-  GENERAL = '482043660376997900',
 }
+
+export enum PHCChannels {
+  STREAMS_CH = '797969923708157992',
+  STREAMS_GH = '797982459953676320',
+  STREAMS_RB = '797980923240775741',
+  STREAMS_OTRO = '797952604046884905',
+}
+
+export type Channels = CHHChannels | PHCChannels;

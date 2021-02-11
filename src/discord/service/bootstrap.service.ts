@@ -89,12 +89,14 @@ export class BootstrapService implements OnApplicationBootstrap {
               const $args: string = args.join(' ');
               const $actions: string = actions.join(' ');
 
-              return $actions.startsWith($args);
+              return $args.startsWith($actions);
             });
 
       if (!commandInstance) {
         return;
       }
+
+      args.splice(0, commandInstance.actions.length);
 
       const { instance, method } = commandInstance;
 

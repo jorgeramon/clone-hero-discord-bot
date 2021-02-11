@@ -1,11 +1,12 @@
 import { Client, Message } from 'discord.js';
 
-import { Channels } from '@shared/enum/channels.enum';
 import { Command } from '@discord/decorator/command.decorator';
 import { ITwitchUser } from '@twitch/interface/twitch-user.interface';
 import { IUser } from '@user/interface/user.interface';
 import { InjectClient } from '@discord/decorator/inject-client.decorator';
+import { InjectPrefix } from '@discord/decorator/inject-prefix.decorator';
 import { Injectable } from '@nestjs/common';
+import { StreamService } from '@shared/service/stream.service';
 import { TwitchService } from '@twitch/service/twitch.service';
 import { UserService } from '@user/service/user.service';
 
@@ -14,10 +15,41 @@ export class TwitchGateway {
   @InjectClient()
   client: Client;
 
+  @InjectPrefix()
+  prefix: string;
+
   constructor(
-    private readonly twitchApiService: TwitchService,
+    private readonly twitchService: TwitchService,
     private readonly userService: UserService,
+    private readonly streamService: StreamService,
   ) {}
+
+  @Command({
+    name: 'untwitch',
+    description: 'Elimina el bot de las notificaciones de tu canal',
+  })
+  async removeTwitchAccount(message: Message): Promise<void> {
+    try {
+      const user: IUser = await this.userService.findOrCreate(message.author);
+      const subscriptions = await this.twitchService.fetchCurrentSubscriptions();
+
+      const subscription = subscriptions.find(
+        (subscription) =>
+          subscription.condition.broadcaster_user_id === user.twitchId,
+      );
+
+      if (!subscription) {
+        await message.reply('no tienes notificaciones activas de tu canal');
+      } else {
+        await this.twitchService.deleteSubscription(subscription.id);
+        await this.userService.updateTwitchAccount(message.author, null, null);
+        await message.reply('el canal fue eliminado de las notificaciones');
+      }
+    } catch (e) {
+      console.error(e);
+      await message.reply('hubo un error al intentar eliminar tu canal');
+    }
+  }
 
   @Command({
     name: 'twitch',
@@ -32,7 +64,7 @@ export class TwitchGateway {
       if (!args.length) {
         await message.reply(
           user.twitchAccount
-            ? `tu cuenta asociada es **${user.twitchAccount}**`
+            ? `tu cuenta asociada es **${user.twitchAccount}**. Si quieres cambiar de cuenta utiliza el comando \`${this.prefix}untwitch\` y luego \`${this.prefix}twitch\` con tu nuevo usuario.`
             : 'no tienes una cuenta asociada todavía',
         );
         return;
@@ -40,7 +72,7 @@ export class TwitchGateway {
 
       if (user.twitchAccount) {
         await message.reply(
-          `ya tienes asociada la cuenta de **${user.twitchAccount}**`,
+          `ya tienes la cuenta asociada **${user.twitchAccount}**. Si quieres cambiar de cuenta utiliza el comando \`${this.prefix}untwitch\` y luego \`${this.prefix}twitch\` con tu nuevo usuario.`,
         );
         return;
       }
@@ -57,7 +89,7 @@ export class TwitchGateway {
         return;
       }
 
-      const twitchUser: ITwitchUser | null = await this.twitchApiService.fetchUserByName(
+      const twitchUser: ITwitchUser | null = await this.twitchService.fetchUserByName(
         twitchAccount,
       );
 
@@ -68,7 +100,7 @@ export class TwitchGateway {
         return;
       }
 
-      await this.twitchApiService.createSubscription(twitchUser.id);
+      await this.twitchService.createSubscription(twitchUser.id);
 
       await this.userService.updateTwitchAccount(
         message.author,
@@ -76,8 +108,13 @@ export class TwitchGateway {
         twitchUser.login,
       );
 
+      const channelsMessage = this.streamService
+        .getChannels()
+        .map((channelId) => `<#${channelId}>`)
+        .join(', ');
+
       await message.reply(
-        `tu cuenta fue registrada. Tus notificaciones apareceran en <#${Channels.STREAMS_EN_VIVO}>`,
+        `tu cuenta fue registrada. Tus notificaciones apareceran en ${channelsMessage} dependiendo del juego de tu transmisión.`,
       );
     } catch (e) {
       console.error(e);

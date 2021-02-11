@@ -1,6 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { Channels } from '@shared/enum/channels.enum';
-import { TwitchGames } from '@shared/enum/twitch-games.enum';
+import { StreamService } from '@shared/service/stream.service';
 import { TwitchGateway } from '@twitch/gateway/twitch.gateway';
 import { ITwitchNotification } from '@twitch/interface/twitch-notification.interface';
 import { ITwitchStream } from '@twitch/interface/twitch-stream.interface';
@@ -16,8 +15,9 @@ import { v4 } from 'uuid';
 export class WebhookController {
   constructor(
     private readonly twitchGateway: TwitchGateway,
-    private readonly twitchApiService: TwitchService,
+    private readonly twitchService: TwitchService,
     private readonly userService: UserService,
+    private readonly streamService: StreamService,
   ) {}
 
   @Post()
@@ -33,22 +33,22 @@ export class WebhookController {
       return verification.challenge;
     }
 
-    const client = this.twitchGateway.client;
-    const channel = await client.channels.fetch(Channels.STREAMS_EN_VIVO);
-
+    const { client } = this.twitchGateway;
     const { event } = notification;
 
-    const twitchStream: ITwitchStream = await this.twitchApiService.fetchStreamByUser(
+    const twitchStream: ITwitchStream = await this.twitchService.fetchStreamByUser(
       event.broadcaster_user_id,
     );
 
-    if (
-      Object.values(TwitchGames).indexOf(twitchStream.game_id as any) === -1
-    ) {
+    const channelId = this.streamService.getChannelByGame(twitchStream.game_id);
+
+    if (!channelId) {
       return 'Ok';
     }
 
-    const twitchUser: ITwitchUser = await this.twitchApiService.fetchUserById(
+    const channel = await client.channels.fetch(channelId);
+
+    const twitchUser: ITwitchUser = await this.twitchService.fetchUserById(
       event.broadcaster_user_id,
     );
 
@@ -59,8 +59,6 @@ export class WebhookController {
     const thumbnail = `${twitchStream.thumbnail_url
       .replace('{width}', '500')
       .replace('{height}', '280')}?uuid=${v4()}`;
-
-    console.log(twitchUser.display_name, thumbnail);
 
     const message = new MessageEmbed()
       .setColor('#0099ff')

@@ -8,11 +8,12 @@ import { FunaModule } from '@funa/funa.module';
 import { IsAdminGuard } from './guard/is-admin.guard';
 import { LupitaGuard } from '@shared/guard/lupita.guard';
 import { SpecialDateService } from './service/special-date.service';
+import { StreamService } from './service/stream.service';
 import { WonkyDayGuard } from './guard/wonky-day.guard';
 
 @Module({
-  providers: [SpecialDateService, EnvironmentService],
-  exports: [SpecialDateService, EnvironmentService],
+  providers: [SpecialDateService, EnvironmentService, StreamService],
+  exports: [SpecialDateService, EnvironmentService, StreamService],
 })
 export class SharedModule {
   static forRootGuards(): DynamicModule {

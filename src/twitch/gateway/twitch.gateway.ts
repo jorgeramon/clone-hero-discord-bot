@@ -1,13 +1,13 @@
+import { Client, Message } from 'discord.js';
+
+import { Channels } from '@shared/enum/channels.enum';
 import { Command } from '@discord/decorator/command.decorator';
+import { ITwitchUser } from '@twitch/interface/twitch-user.interface';
+import { IUser } from '@user/interface/user.interface';
 import { InjectClient } from '@discord/decorator/inject-client.decorator';
 import { Injectable } from '@nestjs/common';
-import { Channels } from '@shared/enum/channels.enum';
-import { Emotes } from '@shared/enum/emotes.enum';
-import { ITwitchUser } from '@twitch/interface/twitch-user.interface';
 import { TwitchService } from '@twitch/service/twitch.service';
-import { IUser } from '@user/interface/user.interface';
 import { UserService } from '@user/service/user.service';
-import { Client, Message } from 'discord.js';
 
 @Injectable()
 export class TwitchGateway {
@@ -52,7 +52,7 @@ export class TwitchGateway {
 
       if (otherUser) {
         await message.reply(
-          `esa cuenta ha sido asociada por <@${otherUser.id}> ${Emotes.JARMONIS_RAGE}`,
+          `esa cuenta ha sido asociada por <@${otherUser.id}>`,
         );
         return;
       }
@@ -77,14 +77,12 @@ export class TwitchGateway {
       );
 
       await message.reply(
-        `tu cuenta fue registrada ${Emotes.JARMONIS_APPROVES}. Tus notificaciones apareceran en <#${Channels.STREAMS_EN_VIVO}>`,
+        `tu cuenta fue registrada. Tus notificaciones apareceran en <#${Channels.STREAMS_EN_VIVO}>`,
       );
     } catch (e) {
       console.error(e);
 
-      await message.reply(
-        `hubo un error al registrar tu cuenta ${Emotes.FISH_DEPRESION}`,
-      );
+      await message.reply(`hubo un error al registrar tu cuenta`);
     }
   }
 }

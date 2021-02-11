@@ -1,6 +1,5 @@
 import { Message, User } from 'discord.js';
 
-import { Emotes } from '@shared/enum/emotes.enum';
 import { FunaService } from '@funa/service/funa.service';
 import { IGuard } from '@discord/interface/guard.interface';
 import { Injectable } from '@nestjs/common';
@@ -16,9 +15,7 @@ export class BotMentionGuard implements IGuard {
 
     if (isBotMentioned) {
       await this.funaService.funa(message.author, message.author);
-      await message.reply(
-        `fuiste funado por mencionar al bot ${Emotes.JARMONIS_RAGE}`,
-      );
+      await message.reply(`fuiste funado por mencionar al bot`);
       return false;
     }
 

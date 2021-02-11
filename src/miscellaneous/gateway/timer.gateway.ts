@@ -1,9 +1,8 @@
 import { Command } from '@discord/decorator/command.decorator';
-import { Injectable } from '@nestjs/common';
-import { Emotes } from '@shared/enum/emotes.enum';
 import { Environments } from '@shared/enum/environments.enum';
-import { SpecialDateService } from '@shared/service/special-date.service';
+import { Injectable } from '@nestjs/common';
 import { Message } from 'discord.js';
+import { SpecialDateService } from '@shared/service/special-date.service';
 import { sample } from 'lodash';
 
 @Injectable()
@@ -16,7 +15,7 @@ export class TimerGateway {
   })
   async daysUntilChristmas(message: Message): Promise<void> {
     if (this.specialDateService.isChristmas()) {
-      await message.channel.send(`HOY ES NAVIDAD ${Emotes.PADORUUCHH} 🎄 🎁`, {
+      await message.channel.send(`HOY ES NAVIDAD 🎄 🎁`, {
         files: [
           'https://media1.giphy.com/media/l0tzgJRjGc7mGgsmXY/giphy.gif?cid=ecf05e478f1109863cc8c875b63a3020145a8476663fb7ac&rid=giphy.gif',
           'https://media.discordapp.net/attachments/781742999579131904/790387403163959336/videoplayback.gif',
@@ -46,12 +45,9 @@ export class TimerGateway {
         'https://media2.giphy.com/media/804TNmnYLfNao/giphy.gif?cid=ecf05e4770ius12g8qi5jh3rvrfeq3f6lyfwtb36dpquvsf9&rid=giphy.gif',
       ];
 
-      await message.channel.send(
-        `Hoy es el día de funar a Wonky ${Emotes.KEK}`,
-        {
-          files: [sample(gifs)],
-        },
-      );
+      await message.channel.send(`Hoy es el día de funar a Wonky`, {
+        files: [sample(gifs)],
+      });
     } else {
       await message.channel.send(
         this.createWonkyResponse(this.specialDateService.daysUntilWonkyDay()),
@@ -62,12 +58,12 @@ export class TimerGateway {
   private createWonkyResponse(days: number): string {
     return `${days > 1 ? 'Faltan' : 'Falta'} **${days}** ${
       days > 1 ? 'días' : 'día'
-    } para el "Martes de funar a Wonky" ${Emotes.JARMONIS_APPROVES}`;
+    } para el "Martes de funar a Wonky"`;
   }
 
   private createChristmasResponse(days: number): string {
     return `${days > 1 ? 'Faltan' : 'Falta'} **${days}** ${
       days > 1 ? 'días' : 'día'
-    } para navidad ${Emotes.PADORUUCHH} 🎄 🎁`;
+    } para navidad 🎄 🎁`;
   }
 }

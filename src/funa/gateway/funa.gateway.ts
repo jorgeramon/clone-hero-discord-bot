@@ -4,7 +4,6 @@ import { InjectClient } from '@discord/decorator/inject-client.decorator';
 import { IFunaReport } from '@funa/interface/funa-report.interface';
 import { FunaService } from '@funa/service/funa.service';
 import { Injectable } from '@nestjs/common';
-import { Emotes } from '@shared/enum/emotes.enum';
 import { BotMentionGuard } from '@shared/guard/bot-mention.guard';
 import { ChristmasGuard } from '@shared/guard/christmas.guard';
 import { EmptyMentionGuard } from '@shared/guard/empty-mention.guard';
@@ -39,9 +38,7 @@ export class FunaGateway {
     limit = limit > 0 && limit <= 15 ? limit : 3;
 
     if (this.isYearInvalid(year)) {
-      await message.reply(
-        `muy garsioso buscando en el año ${year} ${Emotes.JARMONIS_RAGE}`,
-      );
+      await message.reply(`muy garsioso buscando en el año ${year}`);
       return;
     }
 
@@ -55,11 +52,7 @@ export class FunaGateway {
     const messages: string[] = [];
 
     if (!funas.length) {
-      messages.push(
-        `No hay funadores${this.customYearMessage(year)} ${
-          Emotes.FISH_DEPRESION
-        }`,
-      );
+      messages.push(`No hay funadores${this.customYearMessage(year)}`);
     } else if (funas.length === 1) {
       const { user, count } = funas[0];
       const discordUser: User = await this.client.users.fetch(user.id);
@@ -68,13 +61,13 @@ export class FunaGateway {
           discordUser.username
         } es el funador más HDP del server con **${count}** funaciones${this.customYearMessage(
           year,
-        )} ${Emotes.TOMK}`,
+        )}`,
       );
     } else {
       messages.push(
         `Top ${top} funadores más HDP del server${this.customYearMessage(
           year,
-        )} ${Emotes.TOMK}`,
+        )}`,
       );
 
       for (let i = 1; i <= funas.length; i++) {
@@ -103,9 +96,7 @@ export class FunaGateway {
     limit = limit > 0 && limit <= 15 ? limit : 3;
 
     if (this.isYearInvalid(year)) {
-      await message.reply(
-        `muy garsioso buscando en el año ${year} ${Emotes.JARMONIS_RAGE}`,
-      );
+      await message.reply(`muy garsioso buscando en el año ${year}`);
       return;
     }
 
@@ -119,11 +110,7 @@ export class FunaGateway {
     const messages: string[] = [];
 
     if (!funas.length) {
-      messages.push(
-        `No hay funados${this.customYearMessage(year)} ${
-          Emotes.FISH_DEPRESION
-        }`,
-      );
+      messages.push(`No hay funados${this.customYearMessage(year)}`);
     } else if (funas.length === 1) {
       const { user, count } = funas[0];
       const discordUser: User = await this.client.users.fetch(user.id);
@@ -132,13 +119,11 @@ export class FunaGateway {
           discordUser.username
         } es el más funado del server con **${count}** funaciones${this.customYearMessage(
           year,
-        )} ${Emotes.KEK}`,
+        )}`,
       );
     } else {
       messages.push(
-        `Top ${top} más funados del server${this.customYearMessage(year)} ${
-          Emotes.KEK
-        }`,
+        `Top ${top} más funados del server${this.customYearMessage(year)}`,
       );
 
       for (let i = 1; i <= funas.length; i++) {
@@ -171,9 +156,7 @@ export class FunaGateway {
     };
 
     if (this.isYearInvalid(year)) {
-      await message.reply(
-        `muy garsioso buscando en el año ${year} ${Emotes.JARMONIS_RAGE}`,
-      );
+      await message.reply(`muy garsioso buscando en el año ${year}`);
       return;
     }
 
@@ -221,14 +204,12 @@ export class FunaGateway {
     responseMessage +=
       message.mentions.users.size > 1 ? ' han sido funados' : ' ha sido funado';
 
-    await message.channel.send(`${responseMessage} ${Emotes.JARMONIS_RAGE}`);
+    await message.channel.send(`${responseMessage}`);
   }
 
   @Command({ name: 'funar' })
   async funar(message: Message): Promise<void> {
-    await message.reply(
-      `el comando es \`!funa\`... estás todo meco ${Emotes.KEK} ${Emotes.KEKW}`,
-    );
+    await message.reply(`el comando es \`!funa\`... estás todo meco`);
   }
 
   @Guards(WonkyDayGuard)
@@ -253,21 +234,13 @@ export class FunaGateway {
       ];
 
       await message.channel.send(
-        `<@${(<User>latest.from).id}> te regresan tu funa ${
-          Emotes.JARMONIS_RAGE
-        }`,
+        `<@${(<User>latest.from).id}> te regresan tu funa`,
         {
           files: [sample(reverseCards)],
         },
       );
     } else {
-      const emotes: Emotes[] = [
-        Emotes.GHOST_PICARDIA,
-        Emotes.FISH_PICARDIA,
-        Emotes.HENRY_PICARDIA,
-      ];
-
-      await message.channel.send(`**No** ${sample(emotes)}`);
+      await message.channel.send(`**No**`);
     }
   }
 
@@ -276,24 +249,20 @@ export class FunaGateway {
 
     switch (true) {
       case isForMe && !counter:
-        return `no has sido funado${this.customYearMessage(year)} crack ${
-          Emotes.JARMONIS_APPROVES
-        }`;
+        return `no has sido funado${this.customYearMessage(year)} crack`;
 
       case isForMe && counter > 0:
         return `has sido funado **${counter}** ${times}${this.customYearMessage(
           year,
-        )} ${Emotes.JARMONIS}`;
+        )}`;
 
       case !isForMe && !counter:
-        return `${username} no ha sido funado${this.customYearMessage(year)} ${
-          Emotes.JARMONIS_APPROVES
-        }`;
+        return `${username} no ha sido funado${this.customYearMessage(year)}`;
 
       case !isForMe && counter > 0:
         return `${username} ha sido funado **${counter}** ${times}${this.customYearMessage(
           year,
-        )} ${Emotes.JARMONIS}`;
+        )}`;
     }
   }
 

@@ -1,4 +1,3 @@
-import { Emotes } from '@shared/enum/emotes.enum';
 import { IGuard } from '@discord/interface/guard.interface';
 import { Injectable } from '@nestjs/common';
 import { Message } from 'discord.js';
@@ -14,7 +13,7 @@ export class WonkyDayGuard implements IGuard {
       this.specialDateService.isWonkyDay() &&
       message.author.id === Users.WONKY
     ) {
-      await message.reply(`lo siento pero hoy no ${Emotes.KEK}`);
+      await message.reply(`lo siento pero hoy no`);
       return false;
     }
 

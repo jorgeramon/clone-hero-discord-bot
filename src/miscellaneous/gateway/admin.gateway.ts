@@ -3,7 +3,6 @@ import * as moment from 'moment';
 import { Client, Message, User } from 'discord.js';
 
 import { Command } from '@discord/decorator/command.decorator';
-import { Emotes } from '@shared/enum/emotes.enum';
 import { Environments } from '@shared/enum/environments.enum';
 import { Guards } from '@discord/decorator/guard.decorator';
 import { InjectClient } from '@discord/decorator/inject-client.decorator';
@@ -35,7 +34,7 @@ export class AdminGateway {
 
     if (!member) {
       await message.channel.send(
-        `No se encontró al usuario ${Emotes.FISH_DEPRESION} Intenta un username más preciso.`,
+        `No se encontró al usuario. Intenta un username más preciso.`,
       );
     } else {
       await message.channel.send(this.createResponseMessage(member.user));
@@ -45,8 +44,6 @@ export class AdminGateway {
   private createResponseMessage(user: User) {
     return `${user.username} fue creado el día **${moment(
       user.createdAt,
-    ).format('DD [de] MMMM [del] YYYY [a las] hh:mm A')}** ${
-      Emotes.JARMONIS_APPROVES
-    }`;
+    ).format('DD [de] MMMM [del] YYYY [a las] hh:mm A')}**`;
   }
 }

@@ -4,14 +4,15 @@ import {
   GUARD_DECORATOR,
   PREFIX_DECORATOR,
 } from '@discord/constant/decorator';
-import { IGuard } from '@discord/interface/guard.interface';
-import { DiscordService } from '@discord/service/discord.service';
-import { Injectable, OnApplicationBootstrap, Type } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { Environments } from '@shared/enum/environments.enum';
 import { Client, Message, MessageMentions } from 'discord.js';
+import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
+import { Injectable, OnApplicationBootstrap, Type } from '@nestjs/common';
+
+import { ConfigService } from '@nestjs/config';
+import { DiscordService } from '@discord/service/discord.service';
+import { Environments } from '@shared/enum/environments.enum';
+import { IGuard } from '@discord/interface/guard.interface';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { isObject } from 'lodash';
 
 export type CommandInstance = {
@@ -57,6 +58,7 @@ export class BootstrapService implements OnApplicationBootstrap {
 
     client.on('message', async (message: Message) => {
       const { prefix } = this.discordService;
+
       if (message.author.bot || !message.content.startsWith(prefix)) {
         return;
       }
@@ -74,20 +76,21 @@ export class BootstrapService implements OnApplicationBootstrap {
         return;
       }
 
-      const commandInstance: CommandInstance = commandInstances.find(
-        (commandInstance: CommandInstance) => {
-          const { actions } = commandInstance;
+      const commandInstance: CommandInstance =
+        commandInstances.length === 1
+          ? commandInstances[0]
+          : commandInstances.find((commandInstance: CommandInstance) => {
+              const { actions } = commandInstance;
 
-          if (args.length < actions.length) {
-            return false;
-          }
+              if (args.length < actions.length) {
+                return false;
+              }
 
-          const $args: string = args.join(' ');
-          const $actions: string = actions.join(' ');
+              const $args: string = args.join(' ');
+              const $actions: string = actions.join(' ');
 
-          return $actions.startsWith($args);
-        },
-      );
+              return $actions.startsWith($args);
+            });
 
       if (!commandInstance) {
         return;
@@ -166,7 +169,7 @@ export class BootstrapService implements OnApplicationBootstrap {
     }
 
     return {
-      name,
+      name: name.replace('{bot}', this.configService.get<string>('ENV')),
       instance,
       method,
       actions: action ? [action] : actions || [],

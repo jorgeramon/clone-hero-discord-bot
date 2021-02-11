@@ -1,4 +1,3 @@
-import { Emotes } from '@shared/enum/emotes.enum';
 import { IGuard } from '@discord/interface/guard.interface';
 import { Injectable } from '@nestjs/common';
 import { Message } from 'discord.js';
@@ -11,7 +10,7 @@ export class ChristmasGuard implements IGuard {
   async canActivate(message: Message): Promise<boolean> {
     if (this.specialDateService.isChristmas()) {
       await message.reply(
-        `hoy no hay funas por ser navidad ${Emotes.PADORUUCHH}, ¿Dónde está tu espiritu navideño ${Emotes.JARMONIS_RAGE}?`,
+        `hoy no hay funas por ser navidad, ¿Dónde está tu espiritu navideño?`,
       );
       return false;
     }

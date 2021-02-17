@@ -1,15 +1,19 @@
 import { Client, Message } from 'discord.js';
+import { PackDescriptions, PackLinks, Packs } from '@shared/enum/packs.enum';
 import {
   adminDocumentation,
   publicDocumentation,
 } from '@discord/service/bootstrap.service';
 
 import { Command } from '@discord/decorator/command.decorator';
+import { ConfigService } from '@nestjs/config';
+import { Environments } from '@shared/enum/environments.enum';
 import { Guards } from '@discord/decorator/guard.decorator';
 import { InjectClient } from '@discord/decorator/inject-client.decorator';
 import { InjectPrefix } from '@discord/decorator/inject-prefix.decorator';
 import { Injectable } from '@nestjs/common';
 import { IsAdminGuard } from '@shared/guard/is-admin.guard';
+import { flatten } from 'lodash';
 
 @Injectable()
 export class CommandsGateway {
@@ -18,6 +22,12 @@ export class CommandsGateway {
 
   @InjectClient()
   client: Client;
+
+  private readonly environment: string;
+
+  constructor(private readonly configService: ConfigService) {
+    this.environment = this.configService.get('ENV');
+  }
 
   @Command({ name: '{bot}', action: 'comandos' })
   async showPublicCommands(message: Message): Promise<void> {
@@ -39,7 +49,7 @@ export class CommandsGateway {
   }
 
   @Guards(IsAdminGuard)
-  @Command({ name: '{bot}', actions: ['roles'] })
+  @Command({ name: '{bot}', action: 'roles' })
   async showAllRoles(message: Message, args: string[]): Promise<void> {
     if (!args.length) {
       await message.channel.send(
@@ -61,7 +71,7 @@ export class CommandsGateway {
   }
 
   @Guards(IsAdminGuard)
-  @Command({ name: '{bot}', actions: ['canales'] })
+  @Command({ name: '{bot}', action: 'canales' })
   async showAllChannels(message: Message, args: string[]): Promise<void> {
     if (!args.length) {
       await message.channel.send(
@@ -88,7 +98,7 @@ export class CommandsGateway {
   }
 
   @Guards(IsAdminGuard)
-  @Command({ name: '{bot}', actions: ['emotes'] })
+  @Command({ name: '{bot}', action: 'emotes' })
   async showAllEmotes(message: Message, args: string[]): Promise<void> {
     if (!args.length) {
       await message.channel.send(
@@ -111,6 +121,30 @@ export class CommandsGateway {
     }
   }
 
+  @Command({ name: '{bot}', action: 'packs', env: Environments.PHC })
+  async showPacks(message: Message, args: string[]): Promise<void> {
+    if (!args.length) {
+      await message.channel.send(
+        this.addSpaceBetween([
+          `A continuación se muestra la lista de los packs disponibles, para ver los enlaces por favor ejecuta el comando \`${this.prefix}${this.environment} packs [nombre del paquete]\`:`,
+          ...this.getPacksDescriptionMessage(PackDescriptions),
+        ]),
+      );
+    } else {
+      const pack: Packs = Object.values(Packs).find(
+        (pack) => pack === args.join(' ').toLowerCase(),
+      );
+
+      if (!pack) {
+        await message.channel.send('No hay enlace para ese pack');
+      } else {
+        await message.channel.send(
+          this.addSpaceBetween(this.getPacksMessage(PackLinks[pack])),
+        );
+      }
+    }
+  }
+
   private addSpaceBetween(array: string[]): string[] {
     const result: string[] = array.reduce(
       (accumulator, value) => [...accumulator, value, ''],
@@ -118,5 +152,21 @@ export class CommandsGateway {
     );
     result.pop();
     return result;
+  }
+
+  private getPacksDescriptionMessage(links: Object): string[] {
+    return flatten(
+      Object.keys(links).map(
+        (packName: string) => `\`${packName}\`: ${links[packName]}`,
+      ),
+    );
+  }
+
+  private getPacksMessage(links: Object): string[] {
+    return flatten(
+      Object.keys(links).map(
+        (packName: string) => `\`${packName}\`: <${links[packName]}>`,
+      ),
+    );
   }
 }

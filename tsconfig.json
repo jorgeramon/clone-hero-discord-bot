@@ -18,7 +18,8 @@
       "@shared/*": ["./shared/*"],
       "@discord/*": ["./discord/*"],
       "@miscellaneous/*": ["./miscellaneous/*"],
-      "@twitch/*": ["./twitch/*"]
+      "@twitch/*": ["./twitch/*"],
+      "@facebook/*": ["./facebook/*"]
     }
   }
 }

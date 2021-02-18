@@ -10,4 +10,10 @@ export enum PHCRoles {
   BOT = '797293702695092235',
 }
 
-export type Roles = typeof CHHRoles | typeof PHCRoles;
+export enum RBERoles {
+  MOD = '772885153994244196',
+  ADMIN = '772885922311176193',
+  BOT = '776466124652019751',
+}
+
+export type Roles = typeof CHHRoles | typeof PHCRoles | typeof RBERoles;

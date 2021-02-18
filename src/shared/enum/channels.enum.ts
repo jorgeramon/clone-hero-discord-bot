@@ -9,4 +9,9 @@ export enum PHCChannels {
   STREAMS_OTRO = '797952604046884905',
 }
 
+export enum RBEChannels {
+  TWITCH = '776538508332367874',
+  FACEBOOK_LIVE = '776538803388416100',
+}
+
 export type Channels = CHHChannels | PHCChannels;

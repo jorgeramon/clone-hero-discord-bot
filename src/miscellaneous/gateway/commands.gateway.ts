@@ -67,7 +67,7 @@ export class CommandsGateway {
     }
   }
 
-  @Guards(IsAdminGuard)
+  //@Guards(IsAdminGuard)
   @Command({ name: '{bot}', action: 'canales' })
   async showAllChannels(message: Message, args: string[]): Promise<void> {
     if (!args.length) {

@@ -1,5 +1,9 @@
-import { CHHChannels, PHCChannels } from '@shared/enum/channels.enum';
-import { CHHRoles, PHCRoles, Roles } from '@shared/enum/roles.enum';
+import {
+  CHHChannels,
+  PHCChannels,
+  RBEChannels,
+} from '@shared/enum/channels.enum';
+import { CHHRoles, PHCRoles, RBERoles, Roles } from '@shared/enum/roles.enum';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
@@ -11,7 +15,11 @@ export class EnvironmentService implements OnApplicationBootstrap {
   public roles: Roles;
   public streamChannels: Object;
 
-  constructor(private readonly configService: ConfigService) {}
+  private readonly currentServer: string;
+
+  constructor(private readonly configService: ConfigService) {
+    this.currentServer = this.configService.get<string>('ENV');
+  }
 
   onApplicationBootstrap(): void {
     this.getRoles();
@@ -19,16 +27,23 @@ export class EnvironmentService implements OnApplicationBootstrap {
   }
 
   private getRoles(): void {
-    this.roles =
-      this.configService.get<string>('ENV') === Servers.CHH
-        ? CHHRoles
-        : PHCRoles;
+    switch (this.currentServer) {
+      case Servers.CHH:
+        this.roles = CHHRoles;
+        break;
+
+      case Servers.PHC:
+        this.roles = PHCRoles;
+        break;
+
+      case Servers.RBE:
+        this.roles = RBERoles;
+        break;
+    }
   }
 
   private getStreamsChannels(): void {
-    this.streamChannels = this.getStreamChannelsPerGame()[
-      this.configService.get<string>('ENV')
-    ];
+    this.streamChannels = this.getStreamChannelsPerGame()[this.currentServer];
   }
 
   private getStreamChannelsPerGame(): Object {
@@ -65,6 +80,16 @@ export class EnvironmentService implements OnApplicationBootstrap {
         ],
 
         [PHCChannels.STREAMS_OTRO]: true,
+      },
+
+      [Servers.RBE]: {
+        [RBEChannels.TWITCH]: [
+          TwitchGames.ROCK_BAND,
+          TwitchGames.ROCK_BAND_2,
+          TwitchGames.ROCK_BAND_3,
+          TwitchGames.ROCK_BAND_4,
+          TwitchGames.PHASE_SHIFT,
+        ],
       },
     };
   }

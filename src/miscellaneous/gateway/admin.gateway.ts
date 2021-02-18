@@ -3,11 +3,11 @@ import * as moment from 'moment';
 import { Client, Message, User } from 'discord.js';
 
 import { Command } from '@discord/decorator/command.decorator';
-import { Environments } from '@shared/enum/environments.enum';
 import { Guards } from '@discord/decorator/guard.decorator';
 import { InjectClient } from '@discord/decorator/inject-client.decorator';
 import { Injectable } from '@nestjs/common';
 import { IsAdminGuard } from '@shared/guard/is-admin.guard';
+import { Servers } from '@shared/enum/servers.enum';
 
 @Injectable()
 export class AdminGateway {
@@ -18,7 +18,7 @@ export class AdminGateway {
   @Command({
     name: 'rg',
     isAdmin: true,
-    env: Environments.CHH,
+    onlyFor: Servers.CHH,
     usage: '[usuario]',
     description: 'Muestra la fecha de registro de un usuario en particular.',
   })

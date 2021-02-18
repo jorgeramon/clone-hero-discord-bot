@@ -3,7 +3,7 @@ import { CHHRoles, PHCRoles, Roles } from '@shared/enum/roles.enum';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
-import { Environments } from '@shared/enum/environments.enum';
+import { Servers } from '@shared/enum/servers.enum';
 import { TwitchGames } from '@shared/enum/twitch-games.enum';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class EnvironmentService implements OnApplicationBootstrap {
 
   private getRoles(): void {
     this.roles =
-      this.configService.get<string>('ENV') === Environments.CHH
+      this.configService.get<string>('ENV') === Servers.CHH
         ? CHHRoles
         : PHCRoles;
   }
@@ -33,11 +33,11 @@ export class EnvironmentService implements OnApplicationBootstrap {
 
   private getStreamChannelsPerGame(): Object {
     return {
-      [Environments.CHH]: {
+      [Servers.CHH]: {
         [CHHChannels.STREAMS_EN_VIVO]: Object.values(TwitchGames),
       },
 
-      [Environments.PHC]: {
+      [Servers.PHC]: {
         [PHCChannels.STREAMS_GH]: [
           TwitchGames.BAND_HERO,
           TwitchGames.GUITAR_HERO,

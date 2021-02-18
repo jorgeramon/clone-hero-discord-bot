@@ -2,12 +2,12 @@ import { COMMAND_DECORATOR } from '@discord/constant/decorator';
 
 export type CommandOptions = {
   name: string;
-  action?: string;
-  actions?: string[];
+  action?: string | string[];
   description?: string;
   usage?: string;
   isAdmin?: boolean;
-  env?: string;
+  onlyFor?: string | string[];
+  exceptFor?: string | string[];
 };
 
 export const Command = (options: CommandOptions): MethodDecorator => (

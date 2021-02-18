@@ -1,7 +1,7 @@
 import { Command } from '@discord/decorator/command.decorator';
-import { Environments } from '@shared/enum/environments.enum';
 import { Injectable } from '@nestjs/common';
 import { Message } from 'discord.js';
+import { Servers } from '@shared/enum/servers.enum';
 import { SpecialDateService } from '@shared/service/special-date.service';
 import { sample } from 'lodash';
 
@@ -12,6 +12,7 @@ export class TimerGateway {
   @Command({
     name: 'navidad',
     description: 'Muestra los días que faltan para navidad',
+    exceptFor: Servers.RBE,
   })
   async daysUntilChristmas(message: Message): Promise<void> {
     if (this.specialDateService.isChristmas()) {
@@ -32,7 +33,7 @@ export class TimerGateway {
 
   @Command({
     name: 'wonky',
-    env: Environments.CHH,
+    onlyFor: Servers.CHH,
     description:
       'Muestra los días que faltan para el "Martes de funar a Wonky"',
   })

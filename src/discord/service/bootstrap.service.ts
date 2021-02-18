@@ -3,6 +3,7 @@ import {
   COMMAND_DECORATOR,
   GUARD_DECORATOR,
   PREFIX_DECORATOR,
+  SERVER_DECORATOR,
 } from '@discord/constant/decorator';
 import { Client, Message, MessageMentions } from 'discord.js';
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
@@ -10,7 +11,6 @@ import { Injectable, OnApplicationBootstrap, Type } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 import { DiscordService } from '@discord/service/discord.service';
-import { Environments } from '@shared/enum/environments.enum';
 import { IGuard } from '@discord/interface/guard.interface';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { isObject } from 'lodash';
@@ -30,7 +30,7 @@ export const adminDocumentation: string[] = [];
 
 @Injectable()
 export class BootstrapService implements OnApplicationBootstrap {
-  private readonly environment: Environments;
+  private readonly currentServer: string;
 
   constructor(
     private readonly discoveryService: DiscoveryService,
@@ -39,7 +39,7 @@ export class BootstrapService implements OnApplicationBootstrap {
     private readonly moduleRef: ModuleRef,
     private readonly configService: ConfigService,
   ) {
-    this.environment = this.configService.get<string>('ENV') as Environments;
+    this.currentServer = this.configService.get<string>('ENV');
   }
 
   async onApplicationBootstrap(): Promise<void> {
@@ -159,14 +159,18 @@ export class BootstrapService implements OnApplicationBootstrap {
     const {
       name,
       action,
-      actions,
       description,
       usage,
       isAdmin,
-      env,
+      onlyFor,
+      exceptFor,
     } = commandMetadata;
 
-    if (env && env !== this.environment) {
+    if (onlyFor && !this.isServerIncluded(onlyFor)) {
+      return null;
+    }
+
+    if (exceptFor && this.isServerIncluded(exceptFor)) {
       return null;
     }
 
@@ -174,7 +178,7 @@ export class BootstrapService implements OnApplicationBootstrap {
       name: name.replace('{bot}', this.configService.get<string>('ENV')),
       instance,
       method,
-      actions: action ? [action] : actions || [],
+      actions: Array.isArray(action) ? action : action ? [action] : [],
       description,
       usage,
       isAdmin,
@@ -194,6 +198,7 @@ export class BootstrapService implements OnApplicationBootstrap {
     for (let propertyKey in instance) {
       this.scanClientMetadata(instance, propertyKey);
       this.scanPrefixMetadata(instance, propertyKey);
+      this.scanServerMetadata(instance, propertyKey);
     }
   }
 
@@ -218,6 +223,18 @@ export class BootstrapService implements OnApplicationBootstrap {
 
     if (metadata) {
       instance[propertyKey] = this.discordService.prefix;
+    }
+  }
+
+  private scanServerMetadata(instance: any, propertyKey: string): void {
+    const metadata = Reflect.getMetadata(
+      SERVER_DECORATOR,
+      instance,
+      propertyKey,
+    );
+
+    if (metadata) {
+      instance[propertyKey] = this.currentServer;
     }
   }
 
@@ -249,5 +266,10 @@ export class BootstrapService implements OnApplicationBootstrap {
     return this.getDocumentation(
       commands.filter((command: CommandInstance): boolean => command.isAdmin),
     );
+  }
+
+  private isServerIncluded(server: string | string[]) {
+    const servers: string[] = Array.isArray(server) ? server : [server];
+    return servers.indexOf(this.currentServer) !== -1;
   }
 }

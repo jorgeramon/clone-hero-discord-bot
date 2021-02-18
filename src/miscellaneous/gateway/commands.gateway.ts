@@ -6,13 +6,13 @@ import {
 } from '@discord/service/bootstrap.service';
 
 import { Command } from '@discord/decorator/command.decorator';
-import { ConfigService } from '@nestjs/config';
-import { Environments } from '@shared/enum/environments.enum';
 import { Guards } from '@discord/decorator/guard.decorator';
 import { InjectClient } from '@discord/decorator/inject-client.decorator';
 import { InjectPrefix } from '@discord/decorator/inject-prefix.decorator';
+import { InjectServer } from '@discord/decorator/inject-server.decorator';
 import { Injectable } from '@nestjs/common';
 import { IsAdminGuard } from '@shared/guard/is-admin.guard';
+import { Servers } from '@shared/enum/servers.enum';
 import { flatten } from 'lodash';
 
 @Injectable()
@@ -23,11 +23,8 @@ export class CommandsGateway {
   @InjectClient()
   client: Client;
 
-  private readonly environment: string;
-
-  constructor(private readonly configService: ConfigService) {
-    this.environment = this.configService.get('ENV');
-  }
+  @InjectServer()
+  server: string;
 
   @Command({ name: '{bot}', action: 'comandos' })
   async showPublicCommands(message: Message): Promise<void> {
@@ -39,7 +36,7 @@ export class CommandsGateway {
   }
 
   @Guards(IsAdminGuard)
-  @Command({ name: '{bot}', actions: ['comandos', 'admin'] })
+  @Command({ name: '{bot}', action: ['comandos', 'admin'] })
   async showAdminCommands(message: Message): Promise<void> {
     await message.channel.send(
       adminDocumentation.length
@@ -121,12 +118,12 @@ export class CommandsGateway {
     }
   }
 
-  @Command({ name: '{bot}', action: 'packs', env: Environments.PHC })
+  @Command({ name: '{bot}', action: 'packs', exceptFor: Servers.CHH })
   async showPacks(message: Message, args: string[]): Promise<void> {
     if (!args.length) {
       await message.channel.send(
         this.addSpaceBetween([
-          `A continuación se muestra la lista de los packs disponibles, para ver los enlaces por favor ejecuta el comando \`${this.prefix}${this.environment} packs [nombre del paquete]\`:`,
+          `A continuación se muestra la lista de los packs disponibles, para ver los enlaces por favor ejecuta el comando \`${this.prefix}${this.server} packs [nombre del paquete]\`:`,
           ...this.getPacksDescriptionMessage(PackDescriptions),
         ]),
       );

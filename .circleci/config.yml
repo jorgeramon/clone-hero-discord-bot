@@ -41,14 +41,21 @@ jobs:
           name: Instalando en el servidor
           command: |
             source ~/code/setup-env.sh
+
             ssh -o StrictHostKeyChecking=no ${CHH_REMOTE_SERVER} exit
             ssh ${CHH_REMOTE_SERVER} "rm -rf ${CHH_WORKSPACE}/dist"
             scp -r ~/code/dist ~/code/tsconfig-paths-bootstrap.js ~/code/tsconfig.json ~/code/package.json ${CHH_REMOTE_SERVER}:${CHH_WORKSPACE}
             ssh ${CHH_REMOTE_SERVER} "cd ${CHH_WORKSPACE} && ./${CHH_SETUP_SCRIPT}"
+
             ssh -o StrictHostKeyChecking=no ${PHC_REMOTE_SERVER} exit
             ssh ${PHC_REMOTE_SERVER} "rm -rf ${PHC_WORKSPACE}/dist"
             scp -r ~/code/dist ~/code/tsconfig-paths-bootstrap.js ~/code/tsconfig.json ~/code/package.json ${PHC_REMOTE_SERVER}:${PHC_WORKSPACE}
             ssh ${PHC_REMOTE_SERVER} "cd ${PHC_WORKSPACE} && ./${PHC_SETUP_SCRIPT}"
+
+            ssh -o StrictHostKeyChecking=no ${RBE_REMOTE_SERVER} exit
+            ssh ${RBE_REMOTE_SERVER} "rm -rf ${RBE_WORKSPACE}/dist"
+            scp -r ~/code/dist ~/code/tsconfig-paths-bootstrap.js ~/code/tsconfig.json ~/code/package.json ${RBE_REMOTE_SERVER}:${RBE_WORKSPACE}
+            ssh ${RBE_REMOTE_SERVER} "cd ${RBE_WORKSPACE} && ./${RBE_SETUP_SCRIPT}"
 
 workflows:
   development:

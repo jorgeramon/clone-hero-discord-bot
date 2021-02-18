@@ -4,6 +4,7 @@ import { InjectClient } from '@discord/decorator/inject-client.decorator';
 import { IFunaReport } from '@funa/interface/funa-report.interface';
 import { FunaService } from '@funa/service/funa.service';
 import { Injectable } from '@nestjs/common';
+import { Servers } from '@shared/enum/servers.enum';
 import { BotMentionGuard } from '@shared/guard/bot-mention.guard';
 import { ChristmasGuard } from '@shared/guard/christmas.guard';
 import { EmptyMentionGuard } from '@shared/guard/empty-mention.guard';
@@ -29,6 +30,7 @@ export class FunaGateway {
     usage: '[cantidad] [año]',
     description:
       'Muestra a los más HDP del server, los 3 primeros por defecto o la cantidad especificada en el comando (máximo 15). También puedes filtrar la información por un año en específico.',
+    exceptFor: Servers.RBE,
   })
   async funadores(message: Message, args: string[]): Promise<void> {
     let limit: number = parseInt(args[0]);
@@ -87,6 +89,7 @@ export class FunaGateway {
     usage: '[cantidad] [año]',
     description:
       'Muestra los más funados del server, los 3 primeros por defecto o la cantidad especificada en el comando (máximo 15). También puedes filtrar la información por un año en específico.',
+    exceptFor: Servers.RBE,
   })
   async funados(message: Message, args: string[]): Promise<void> {
     let limit: number = parseInt(args[0]);
@@ -144,6 +147,7 @@ export class FunaGateway {
     usage: '[@mencion] [año]',
     description:
       'Muestra cuántas veces ha sido funado el usuario mencionado o tú si no mencionas a nadie. También puedes filtrar la información por un año en específico.',
+    exceptFor: Servers.RBE,
   })
   async funas(message: Message, args: string[]): Promise<void> {
     let year: number = parseInt(args[0]) || moment().year();
@@ -189,6 +193,7 @@ export class FunaGateway {
     usage: '[@mencion]',
     description:
       'Funa a los usuarios mencionados (puede ser 1 o más). NO ABUSES DE ESTE COMANDO HDTPM.',
+    exceptFor: Servers.RBE,
   })
   async funa(message: Message): Promise<void> {
     await Promise.all(
@@ -217,6 +222,7 @@ export class FunaGateway {
     name: 'reversa',
     description:
       'Regresas tú última funa, solo tienes 5 segundos para reaccionar, crack',
+    exceptFor: Servers.RBE,
   })
   async reversa(message: Message): Promise<void> {
     const latest = await this.funaService.getLastestFromFunado(message.author);

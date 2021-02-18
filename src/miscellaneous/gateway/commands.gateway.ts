@@ -67,7 +67,7 @@ export class CommandsGateway {
     }
   }
 
-  //@Guards(IsAdminGuard)
+  @Guards(IsAdminGuard)
   @Command({ name: '{bot}', action: 'canales' })
   async showAllChannels(message: Message, args: string[]): Promise<void> {
     if (!args.length) {
@@ -118,7 +118,13 @@ export class CommandsGateway {
     }
   }
 
-  @Command({ name: '{bot}', action: 'packs', exceptFor: Servers.CHH })
+  @Command({
+    name: '{bot}',
+    action: 'packs',
+    usage: '[nombre del pack]',
+    description: 'Muestra enlaces para descargar distintos packs.',
+    exceptFor: Servers.CHH,
+  })
   async showPacks(message: Message, args: string[]): Promise<void> {
     if (!args.length) {
       await message.channel.send(

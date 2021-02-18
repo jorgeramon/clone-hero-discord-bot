@@ -33,7 +33,7 @@ export class WebhookController {
 
   @Post()
   notification(@Body() event: FacebookEvent): string {
-    console.log(event);
+    console.log(JSON.stringify(event, null, 2));
     return 'Ok';
   }
 }

@@ -11,7 +11,7 @@ import { UserService } from '@user/service/user.service';
 import { MessageEmbed } from 'discord.js';
 import { v4 } from 'uuid';
 
-@Controller('/twitch/webhook')
+@Controller('twitch/webhook')
 export class WebhookController {
   constructor(
     private readonly twitchGateway: TwitchGateway,

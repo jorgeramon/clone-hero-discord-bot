@@ -1,8 +1,14 @@
 export enum Packs {
   Puppetz = 'puppetz',
+  GuitarHero = 'guitarhero',
+  Henry = 'henry',
 }
 
 export const PackLinks: Record<Packs, Object> = {
+  [Packs.GuitarHero]: {
+    'Band Hero': 'https://gofile.io/d/fsmjKL',
+    'DJ Hero': 'https://gofile.io/d/1rZDbE',
+  },
   [Packs.Puppetz]: {
     'Puppetz Hero Zero': 'https://gofile.io/d/1wNLJr',
     'Puppetz Hero': 'https://gofile.io/d/VY75ip',
@@ -17,9 +23,17 @@ export const PackLinks: Record<Packs, Object> = {
     'Cowbows From Hell (Full Album)': 'https://gofile.io/d/qmMf3O',
     'Rock Band X': 'https://gofile.io/d/FGOyJc',
   },
+  [Packs.Henry]: {
+    'Carpeta de Drive':
+      'https://drive.google.com/drive/mobile/folders/1EEtYT4Qc__fZ4CZNhAVBBzU-WVSDzZWr',
+  },
 };
 
 export const PackDescriptions: Record<Packs, string> = {
+  [Packs.GuitarHero]:
+    'Packs de los juegos originales de Guitar Hero incluyendo Guitar Hero Live, Band Hero y DJ Hero.',
   [Packs.Puppetz]:
     'Puppetz es uno de los charters legendarios en la era Frets On Fire, sus packs son difíciles de conseguir. Podrás encontrar los packs de Puppetz Hero Zero, 1, 2, 3 y 4 (algunos incompletos) además de packs dedicados a Megadeth, Iron Maiden, Metallica entre otros.',
+  [Packs.Henry]:
+    'Charter mexicano, enfocado a los temas en español para RB3 y CH.',
 };

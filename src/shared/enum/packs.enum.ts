@@ -49,11 +49,11 @@ export const PackLinks: Record<Packs, Object> = {
 
 export const PackDescriptions: Record<Packs, string> = {
   [Packs.GuitarHero]:
-    'Packs de los juegos originales de Guitar Hero incluyendo Band Hero y DJ Hero. Compatibles con Clone Hero, Phase Shift y Frets on Fire.',
+    'Packs de los juegos originales de Guitar Hero incluyendo Band Hero y DJ Hero. Compatibles con Clone Hero.',
   [Packs.Puppetz]:
-    'Puppetz es uno de los charters legendarios en la era Frets On Fire. Compatibles con Clone Hero, Phase Shift y Frets on Fire.',
+    'Puppetz es uno de los charters legendarios en la era Frets On Fire. Compatibles con Clone Hero.',
   [Packs.Henry]:
     'Charter mexicano, enfocado a los temas en español. Compatibles en Clone Hero y Rock Band 3.',
   [Packs.Diegazos]:
-    'Charter y streamer mexicano con más de 600 canciones charteadas en diferentes géneros musicales. Compatibles con Clone Hero, Phase Shift y Frets on Fire.',
+    'Charter y streamer mexicano con más de 600 canciones charteadas en diferentes géneros musicales. Compatibles con Clone Hero.',
 };

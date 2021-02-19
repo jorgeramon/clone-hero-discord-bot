@@ -6,6 +6,19 @@ export enum Packs {
 
 export const PackLinks: Record<Packs, Object> = {
   [Packs.GuitarHero]: {
+    'Guitar Hero': 'https://gofile.io/d/i8UPVi',
+    //'Guitar Hero 2': '',
+    //'Guitar Hero 2 DLC': '',
+    //'Guitar Hero 3 Legends of Rock': '',
+    //'Guitar Hero 3 Legends of Rock DLC': '',
+    //'Guitar Hero World Tour': '',
+    //'Guitar Hero World Tour DLC': '',
+    //'Guitar Hero 5': '',
+    //'Guitar Hero 5 DLC': '',
+    //'Guitar Hero Warriors of Rock': '',
+    //'Guitar Hero Warriors of Rock DLC': '',
+    'Guitar Hero Metallica': 'https://gofile.io/d/i8UPVi',
+    //'Guitar Hero Smash Hits': '',
     'Band Hero': 'https://gofile.io/d/fsmjKL',
     'DJ Hero': 'https://gofile.io/d/1rZDbE',
   },

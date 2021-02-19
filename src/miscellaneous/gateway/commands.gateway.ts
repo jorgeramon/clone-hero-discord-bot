@@ -12,7 +12,6 @@ import { InjectPrefix } from '@discord/decorator/inject-prefix.decorator';
 import { InjectServer } from '@discord/decorator/inject-server.decorator';
 import { Injectable } from '@nestjs/common';
 import { IsAdminGuard } from '@shared/guard/is-admin.guard';
-import { Servers } from '@shared/enum/servers.enum';
 import { flatten } from 'lodash';
 
 @Injectable()
@@ -123,7 +122,6 @@ export class CommandsGateway {
     action: 'packs',
     usage: '[nombre del pack]',
     description: 'Muestra enlaces para descargar distintos packs.',
-    exceptFor: Servers.CHH,
   })
   async showPacks(message: Message, args: string[]): Promise<void> {
     if (!args.length) {

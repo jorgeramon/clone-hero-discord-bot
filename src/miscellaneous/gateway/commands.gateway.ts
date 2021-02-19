@@ -140,7 +140,10 @@ export class CommandsGateway {
         await message.channel.send('No hay enlace para ese pack');
       } else {
         await message.channel.send(
-          this.addSpaceBetween(this.getPacksMessage(PackLinks[pack])),
+          this.addSpaceBetween([
+            PackDescriptions[pack],
+            ...this.getPacksMessage(PackLinks[pack]),
+          ]),
         );
       }
     }

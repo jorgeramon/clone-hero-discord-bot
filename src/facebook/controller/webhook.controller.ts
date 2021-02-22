@@ -3,7 +3,6 @@ import { FacebookNotification } from '@facebook/interface/facebook-notification.
 import { Body, Controller, Param, Post } from '@nestjs/common';
 import { StreamService } from '@shared/service/stream.service';
 import { MessageEmbed, User } from 'discord.js';
-import { v4 } from 'uuid';
 
 @Controller('facebook/webhook')
 export class WebhookController {
@@ -39,7 +38,7 @@ export class WebhookController {
       return 'Ok';
     }
 
-    const thumbnail = `${data.embeds[0].image.url}?uuid=${v4()}`;
+    const thumbnail = `${data.embeds[0].image.url}`;
     const [title, profileUrl] = data.embeds[0].description.split('\n');
 
     const message = new MessageEmbed()

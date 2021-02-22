@@ -24,8 +24,6 @@ export class WebhookController {
   async notification(
     @Body() data: ITwitchNotification | ITwitchVerification,
   ): Promise<string> {
-    console.log('> Twitch notification', JSON.stringify(data, null, 2));
-
     const notification = data as ITwitchNotification;
     const verification = data as ITwitchVerification;
 
@@ -40,11 +38,18 @@ export class WebhookController {
       event.broadcaster_user_id,
     );
 
-    const channelId = this.streamService.getChannelByGame(twitchStream.game_id);
+    const channelId = this.streamService.getTwitchChannelByGame(
+      twitchStream.game_id,
+    );
 
     if (!channelId) {
       return 'Ok';
     }
+
+    console.log(
+      '------------------------[ TWITCH NOTIFICATION ]------------------------',
+    );
+    console.log(JSON.stringify(data, null, 2));
 
     const channel = await client.channels.fetch(channelId);
 

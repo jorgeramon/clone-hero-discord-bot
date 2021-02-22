@@ -76,13 +76,19 @@ export class BootstrapService implements OnApplicationBootstrap {
         return;
       }
 
+      console.log(commandInstances);
+
       const commandInstance: CommandInstance =
         commandInstances.length === 1
           ? commandInstances[0]
           : commandInstances.find((commandInstance: CommandInstance) => {
               const { actions } = commandInstance;
 
-              if (args.length < actions.length) {
+              if (
+                args.length < actions.length ||
+                (!actions.length && args.length) ||
+                (actions.length && !args.length)
+              ) {
                 return false;
               }
 

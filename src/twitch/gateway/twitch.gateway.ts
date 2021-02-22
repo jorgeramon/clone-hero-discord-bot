@@ -109,12 +109,12 @@ export class TwitchGateway {
       );
 
       const channelsMessage = this.streamService
-        .getChannels()
+        .getTwitchChannels()
         .map((channelId) => `<#${channelId}>`)
         .join(', ');
 
       await message.reply(
-        `tu cuenta fue registrada. Tus notificaciones apareceran en ${channelsMessage} dependiendo del juego de tu transmisión.`,
+        `tu cuenta fue registrada. Tus notificaciones apareceran en ${channelsMessage}.`,
       );
     } catch (e) {
       console.error(e);

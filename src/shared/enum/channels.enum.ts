@@ -3,9 +3,8 @@ export enum CHHChannels {
 }
 
 export enum PHCChannels {
-  STREAMS_CH = '797969923708157992',
-  STREAMS_GH = '797982459953676320',
-  STREAMS_RB = '797980923240775741',
+  TWITCH = '813404418640838718',
+  FACEBOOK = '813404440479662120',
   STREAMS_OTRO = '797952604046884905',
 }
 
@@ -14,4 +13,4 @@ export enum RBEChannels {
   FACEBOOK_LIVE = '776538803388416100',
 }
 
-export type Channels = CHHChannels | PHCChannels;
+export type Channels = CHHChannels | PHCChannels | RBEChannels;

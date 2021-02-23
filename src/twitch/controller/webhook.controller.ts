@@ -31,6 +31,11 @@ export class WebhookController {
       return verification.challenge;
     }
 
+    console.log(
+      '------------------------[ TWITCH NOTIFICATION ]------------------------',
+    );
+    console.log(JSON.stringify(data, null, 2));
+
     const { client } = this.twitchGateway;
     const { event } = notification;
 
@@ -38,24 +43,30 @@ export class WebhookController {
       event.broadcaster_user_id,
     );
 
+    if (!twitchStream) {
+      console.warn('Streamer information not found in Twitch API');
+      return 'Ok';
+    }
+
     const channelId = this.streamService.getTwitchChannelByGame(
       twitchStream.game_id,
     );
 
     if (!channelId) {
+      console.warn('Channel not found for Twitch Notification');
       return 'Ok';
     }
-
-    console.log(
-      '------------------------[ TWITCH NOTIFICATION ]------------------------',
-    );
-    console.log(JSON.stringify(data, null, 2));
 
     const channel = await client.channels.fetch(channelId);
 
     const twitchUser: ITwitchUser = await this.twitchService.fetchUserById(
       event.broadcaster_user_id,
     );
+
+    if (!twitchUser) {
+      console.warn('User not found in Twitch API');
+      return 'Ok';
+    }
 
     const user: IUser = await this.userService.findOneByTwitchAccount(
       twitchUser.login,

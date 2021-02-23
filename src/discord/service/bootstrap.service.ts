@@ -5,14 +5,13 @@ import {
   PREFIX_DECORATOR,
   SERVER_DECORATOR,
 } from '@discord/constant/decorator';
-import { Client, Message, MessageMentions } from 'discord.js';
-import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
-import { Injectable, OnApplicationBootstrap, Type } from '@nestjs/common';
-
-import { ConfigService } from '@nestjs/config';
-import { DiscordService } from '@discord/service/discord.service';
 import { IGuard } from '@discord/interface/guard.interface';
+import { DiscordService } from '@discord/service/discord.service';
+import { Injectable, OnApplicationBootstrap, Type } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { Client, Message, MessageMentions } from 'discord.js';
 import { isObject } from 'lodash';
 
 export type CommandInstance = {
@@ -75,8 +74,6 @@ export class BootstrapService implements OnApplicationBootstrap {
       if (!commandInstances.length) {
         return;
       }
-
-      console.log(commandInstances);
 
       const commandInstance: CommandInstance =
         commandInstances.length === 1

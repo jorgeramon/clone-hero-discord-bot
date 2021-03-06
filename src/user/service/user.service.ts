@@ -12,6 +12,10 @@ export class UserService {
     return user || this.repository.create({ id: data.id, tag: data.tag });
   }
 
+  findOneByDiscordId(discordId: string): Promise<IUser> {
+    return this.repository.findOneById(discordId);
+  }
+
   async updateTwitchAccount(
     discordUser: User,
     twitchId: string,

@@ -2,13 +2,16 @@ import { FacebookGateway } from '@facebook/gateway/facebook.gateway';
 import { FacebookNotification } from '@facebook/interface/facebook-notification.interface';
 import { Body, Controller, Param, Post } from '@nestjs/common';
 import { StreamService } from '@shared/service/stream.service';
-import { MessageEmbed, User } from 'discord.js';
+import { IUser } from '@user/interface/user.interface';
+import { UserService } from '@user/service/user.service';
+import { MessageEmbed } from 'discord.js';
 
 @Controller('facebook/webhook')
 export class WebhookController {
   constructor(
     private readonly facebookGateway: FacebookGateway,
     private readonly streamService: StreamService,
+    private readonly userService: UserService,
   ) {}
 
   @Post(':id')
@@ -31,7 +34,7 @@ export class WebhookController {
     const { client } = this.facebookGateway;
     const channel = await client.channels.fetch(channelId);
 
-    const user: User = await client.users.fetch(discordId);
+    const user: IUser = await this.userService.findOneByDiscordId(discordId);
 
     if (!user) {
       console.warn(`User ${discordId} is not in the server`);

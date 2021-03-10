@@ -1,15 +1,15 @@
-import { FacebookGateway } from '@facebook/gateway/facebook.gateway';
+import { CommandsGateway } from '@miscellaneous/gateway/commands.gateway';
 import { Body, Controller, Post } from '@nestjs/common';
 
 @Controller('server')
 export class ServerController {
-  constructor(private readonly facebookGateway: FacebookGateway) {}
+  constructor(private readonly commandGateway: CommandsGateway) {}
 
   @Post()
   async message(@Body() data: any): Promise<string> {
     const { message, channel } = data;
 
-    const { client } = this.facebookGateway;
+    const { client } = this.commandGateway;
 
     const channelInstance = await client.channels.fetch(channel);
 

@@ -12,6 +12,7 @@ import { InjectPrefix } from '@discord/decorator/inject-prefix.decorator';
 import { InjectServer } from '@discord/decorator/inject-server.decorator';
 import { Injectable } from '@nestjs/common';
 import { IsAdminGuard } from '@shared/guard/is-admin.guard';
+import { Servers } from '@shared/enum/servers.enum';
 import { flatten } from 'lodash';
 
 @Injectable()
@@ -147,6 +148,49 @@ export class CommandsGateway {
         );
       }
     }
+  }
+
+  @Command({
+    name: 'online',
+    description: 'Muestra los datos de conexión para la v24 de Clone Hero',
+    exceptFor: [Servers.CHH, Servers.RBE],
+  })
+  async online(message: Message): Promise<void> {
+    await message.channel.send([
+      'A partir del Public Test Build **v24.0.2478** se puede utilizar un servidor central para jugar, sin la necesidad de instalar y configurar ningún software adicional.',
+      '',
+      '**SERVIDOR 1**',
+      '**IP:** online.plastichero.rocks',
+      '**Port:** 2000',
+      '**Password:** phc',
+      '',
+      '**SERVIDOR 2**',
+      '**IP:** online.plastichero.rocks',
+      '**Port:** 2001',
+      '**Password:** phc',
+      '',
+      '**SERVIDOR 3**',
+      '**IP:** online.plastichero.rocks',
+      '**Port:** 2002',
+      '**Password:** phc',
+    ]);
+  }
+
+  @Command({
+    name: 'ptb',
+    description: 'Muestra los enlaces para descargar el Clone Hero Launcher',
+    exceptFor: [Servers.CHH, Servers.RBE],
+  })
+  async ptb(message: Message): Promise<void> {
+    await message.channel.send([
+      '**Clone Hero Launcher**',
+      '',
+      '**Windows (x64 Only):** <https://tinyurl.com/y677suu4>',
+      '**Linux:** <https://tinyurl.com/yybmranz>',
+      '**MacOS:** <https://tinyurl.com/y39zo2uq>',
+      '',
+      '**QuickStart guide:** <https://tinyurl.com/yxpes2sf>',
+    ]);
   }
 
   private addSpaceBetween(array: string[]): string[] {

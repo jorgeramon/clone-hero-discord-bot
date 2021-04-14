@@ -159,20 +159,20 @@ export class CommandsGateway {
     await message.channel.send([
       'A partir del Public Test Build **v24.0.2478** se puede utilizar un servidor central para jugar, sin la necesidad de instalar y configurar ningún software adicional.',
       '',
-      '**SERVIDOR 1**',
-      '**IP:** online.plastichero.rocks',
-      '**Port:** 2000',
-      '**Password:** phc',
+      '*SERVIDOR 1*',
+      'IP: **online.plastichero.rocks**',
+      'Port: **2000**',
+      'Password: **phc**',
       '',
-      '**SERVIDOR 2**',
-      '**IP:** online.plastichero.rocks',
-      '**Port:** 2001',
-      '**Password:** phc',
+      '*SERVIDOR 2*',
+      'IP: **online.plastichero.rocks**',
+      'Port: **2001**',
+      'Password: **phc**',
       '',
-      '**SERVIDOR 3**',
-      '**IP:** online.plastichero.rocks',
-      '**Port:** 2002',
-      '**Password:** phc',
+      '*SERVIDOR 3*',
+      'IP: **online.plastichero.rocks**',
+      'Port: **2002**',
+      'Password: **phc**',
     ]);
   }
 
@@ -185,11 +185,11 @@ export class CommandsGateway {
     await message.channel.send([
       '**Clone Hero Launcher**',
       '',
-      '**Windows (x64 Only):** <https://tinyurl.com/y677suu4>',
-      '**Linux:** <https://tinyurl.com/yybmranz>',
-      '**MacOS:** <https://tinyurl.com/y39zo2uq>',
+      'Windows (x64 Only): <https://tinyurl.com/y677suu4>',
+      'Linux: <https://tinyurl.com/yybmranz>',
+      'MacOS: <https://tinyurl.com/y39zo2uq>',
       '',
-      '**QuickStart guide:** <https://tinyurl.com/yxpes2sf>',
+      'QuickStart guide: <https://tinyurl.com/yxpes2sf>',
     ]);
   }
 

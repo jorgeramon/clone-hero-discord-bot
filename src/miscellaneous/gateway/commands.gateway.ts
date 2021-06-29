@@ -1,18 +1,18 @@
-import { Client, Message } from 'discord.js';
-import { PackDescriptions, PackLinks, Packs } from '@shared/enum/packs.enum';
-import {
-  adminDocumentation,
-  publicDocumentation,
-} from '@discord/service/bootstrap.service';
-
 import { Command } from '@discord/decorator/command.decorator';
 import { Guards } from '@discord/decorator/guard.decorator';
 import { InjectClient } from '@discord/decorator/inject-client.decorator';
 import { InjectPrefix } from '@discord/decorator/inject-prefix.decorator';
 import { InjectServer } from '@discord/decorator/inject-server.decorator';
+import {
+  adminDocumentation,
+  publicDocumentation,
+} from '@discord/service/bootstrap.service';
 import { Injectable } from '@nestjs/common';
-import { IsAdminGuard } from '@shared/guard/is-admin.guard';
+import { ConfigService } from '@nestjs/config';
+import { PackDescriptions, PackLinks, Packs } from '@shared/enum/packs.enum';
 import { Servers } from '@shared/enum/servers.enum';
+import { IsAdminGuard } from '@shared/guard/is-admin.guard';
+import { Client, Message } from 'discord.js';
 import { flatten } from 'lodash';
 
 @Injectable()
@@ -25,6 +25,8 @@ export class CommandsGateway {
 
   @InjectServer()
   server: string;
+
+  constructor(private readonly configService: ConfigService) {}
 
   @Command({ name: '{bot}', action: 'comandos' })
   async showPublicCommands(message: Message): Promise<void> {
@@ -151,29 +153,48 @@ export class CommandsGateway {
   }
 
   @Command({
-    name: 'online',
-    description: 'Muestra los datos de conexión para la v24 de Clone Hero',
-    exceptFor: [Servers.CHH, Servers.RBE],
+    name: 'servers',
+    description:
+      'Muestra la lista de servidores de Clone Hero disponibles para jugar en línea',
+    exceptFor: [Servers.RBE],
   })
-  async online(message: Message): Promise<void> {
-    await message.channel.send([
-      'A partir del Public Test Build **v24.0.2478** se puede utilizar un servidor central para jugar, sin la necesidad de instalar y configurar ningún software adicional.',
-      '',
-      '*SERVIDOR 1*',
-      'IP: **online.plastichero.rocks**',
-      'Port: **2000**',
-      'Password: **phc**',
-      '',
-      '*SERVIDOR 2*',
-      'IP: **online.plastichero.rocks**',
-      'Port: **2001**',
-      'Password: **phc**',
-      '',
-      '*SERVIDOR 3*',
-      'IP: **online.plastichero.rocks**',
-      'Port: **2002**',
-      'Password: **phc**',
-    ]);
+  async online(message: Message, args: string[]): Promise<void> {
+    const host = this.configService.get<string>('CH_SERVER_HOST');
+    const password = this.configService.get<string>('CH_SERVER_PASSWORD');
+    const minPort = this.configService.get<number>('CH_SERVER_MIN_PORT');
+    const maxPort = this.configService.get<number>('CH_SERVER_MAX_PORT');
+
+    if (!args.length) {
+      let messages: string[] = [];
+
+      for (let i = minPort, j = 1; i <= maxPort; i++, j++) {
+        messages = [
+          ...messages,
+          `_Servidor ${j}_`,
+          `IP: **${host}**`,
+          `Puerto: **${i}**`,
+          `Contraseña: **${password}**`,
+          '',
+        ];
+      }
+
+      await message.channel.send(messages);
+    } else {
+      const port = Number(args[0]);
+
+      if (isNaN(port) || port > maxPort || port < minPort) {
+        await message.reply(
+          'no existe ese servidor. Para conocer todos los servidores disponibles ejecuta el comando `!servers`.',
+        );
+      } else {
+        await message.channel.send([
+          `_Servidor ${(port % minPort) + 1}_`,
+          `IP: **${host}**`,
+          `Puerto: **${port}**`,
+          `Contraseña: **${password}**`,
+        ]);
+      }
+    }
   }
 
   @Command({

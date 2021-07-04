@@ -104,6 +104,8 @@ export class MinecraftGateway {
 
       client.once('output', async () => {
         client.close();
+
+        await message.channel.send('<:tabien:852997887230607370>');
       });
 
       await client.run(args.join(' '));

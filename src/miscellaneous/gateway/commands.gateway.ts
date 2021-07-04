@@ -173,7 +173,7 @@ export class CommandsGateway {
           `_Servidor ${j}_`,
           `IP: **${host}**`,
           `Puerto: **${i}**`,
-          `Contraseña: **${password}**`,
+          password ? `Contraseña: **${password}**` : '**No tiene contraseña**',
           '',
         ];
       }
@@ -191,7 +191,7 @@ export class CommandsGateway {
           `_Servidor ${(port % minPort) + 1}_`,
           `IP: **${host}**`,
           `Puerto: **${port}**`,
-          `Contraseña: **${password}**`,
+          password ? `Contraseña: **${password}**` : '**No tiene contraseña**',
         ]);
       }
     }

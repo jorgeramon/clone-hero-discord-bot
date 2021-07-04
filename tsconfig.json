@@ -19,7 +19,8 @@
       "@discord/*": ["./discord/*"],
       "@miscellaneous/*": ["./miscellaneous/*"],
       "@twitch/*": ["./twitch/*"],
-      "@facebook/*": ["./facebook/*"]
+      "@facebook/*": ["./facebook/*"],
+      "@minecraft/*": ["./minecraft/*"]
     }
   }
 }

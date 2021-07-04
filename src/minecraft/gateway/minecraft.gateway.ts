@@ -102,13 +102,38 @@ export class MinecraftGateway {
 
       await client.connect();
 
-      client.once('output', async () => {
+      client.once('output', async (response) => {
         client.close();
 
-        await message.channel.send('<:tabien:852997887230607370>');
+        if (response) {
+          await message.channel.send(response);
+        } else {
+          await message.channel.send('<a:maincra:861331866991722536>');
+        }
       });
 
-      await client.run(args.join(' '));
+      if (!args.length) {
+        await message.channel.send([
+          'Lista de comandos disponibles: <https://minecraft.fandom.com/wiki/Commands>',
+        ]);
+        return;
+      }
+
+      const command = args.join(' ').trim();
+
+      if (
+        command.startsWith('say') ||
+        command.startsWith('msg') ||
+        command.startsWith('tell')
+      ) {
+        await client.run(
+          [args[0], `<${message.author.username} dice>`, ...args.slice(1)].join(
+            ' ',
+          ),
+        );
+      } else {
+        await client.run(command);
+      }
     } catch (e) {
       console.error(e);
       await message.channel.send('El servidor no se encuentra disponible ❌');

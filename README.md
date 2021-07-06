@@ -1,6 +1,6 @@
-# Clone Hero Hispano Discord Bot
+# Clone Hero Discord Bot
 
-Hola! Este es el código fuente del bot que esta corriendo en el servidor de Clone Hero Hispano. Son las 12 AM y debería estar haciendo mi tarea.
+Hola! Este es el código fuente del bot que esta corriendo en el servidor de Clone Hero Hispano, Plastic Hero Community y otros.
 
 ## Requisitos del sistema
 

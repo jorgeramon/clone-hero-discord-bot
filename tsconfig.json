@@ -20,7 +20,8 @@
       "@miscellaneous/*": ["./miscellaneous/*"],
       "@twitch/*": ["./twitch/*"],
       "@facebook/*": ["./facebook/*"],
-      "@minecraft/*": ["./minecraft/*"]
+      "@minecraft/*": ["./minecraft/*"],
+      "@dialogflow/*": ["./dialogflow/*"]
     }
   }
 }

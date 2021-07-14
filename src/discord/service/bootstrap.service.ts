@@ -1,3 +1,4 @@
+import { DialogflowService } from '@dialogflow/service/dialogflow.service';
 import {
   CLIENT_DECORATOR,
   COMMAND_DECORATOR,
@@ -11,6 +12,7 @@ import { Injectable, OnApplicationBootstrap, Type } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { Users } from '@shared/enum/users.enum';
 import { Client, Message, MessageMentions } from 'discord.js';
 import { isObject } from 'lodash';
 
@@ -37,6 +39,7 @@ export class BootstrapService implements OnApplicationBootstrap {
     private readonly discordService: DiscordService,
     private readonly moduleRef: ModuleRef,
     private readonly configService: ConfigService,
+    private readonly dialogflowService: DialogflowService,
   ) {
     this.currentServer = this.configService.get<string>('ENV');
   }
@@ -51,6 +54,8 @@ export class BootstrapService implements OnApplicationBootstrap {
 
     const client: Client = this.discordService.getDiscordClient();
 
+    this.dialogflowService.initialize();
+
     client.on('ready', () => {
       console.log('> Conectado a Discord');
     });
@@ -58,68 +63,108 @@ export class BootstrapService implements OnApplicationBootstrap {
     client.on('message', async (message: Message) => {
       const { prefix } = this.discordService;
 
-      if (message.author.bot || !message.content.startsWith(prefix)) {
+      // El bot no puede procesar sus propios mensajes
+      if (message.author.bot || !message.content) {
         return;
       }
 
-      const command_body: string = message.content.slice(prefix.length);
-      const args: string[] = command_body
-        .split(' ')
-        .filter((arg: string) => !MessageMentions.USERS_PATTERN.test(arg));
-      const commandName: string = args.shift().toLowerCase();
-      const commandInstances: CommandInstance[] = commands.filter(
-        (command: CommandInstance) => command.name === commandName,
-      );
-
-      if (!commandInstances.length) {
-        return;
+      if (
+        message.mentions.users.some(
+          (user) => user.bot && user.id === Users.PLASTIC_HERO_COMMUNITY_BOT,
+        )
+      ) {
+        this.executeDialogflow(message);
+      } else if (message.content.startsWith(prefix)) {
+        this.executeCommand(message, prefix, commands);
       }
-
-      const commandInstance: CommandInstance =
-        commandInstances.length === 1
-          ? commandInstances[0]
-          : commandInstances.find((commandInstance: CommandInstance) => {
-              const { actions } = commandInstance;
-
-              if (
-                args.length < actions.length ||
-                (!actions.length && args.length) ||
-                (actions.length && !args.length)
-              ) {
-                return false;
-              }
-
-              const $args: string = args.join(' ');
-              const $actions: string = actions.join(' ');
-
-              return $args.startsWith($actions);
-            });
-
-      if (!commandInstance) {
-        return;
-      }
-
-      args.splice(0, commandInstance.actions.length);
-
-      const { instance, method } = commandInstance;
-
-      const guards: Type<IGuard>[] = this.scanGuardsMetadata(instance, method);
-
-      for (let guardType of guards) {
-        const guardInstance: IGuard = this.moduleRef.get(guardType, {
-          strict: false,
-        });
-
-        if (guardInstance && !(await guardInstance.canActivate(message))) {
-          return;
-        }
-      }
-
-      instance[method](message, args);
     });
   }
 
-  getCommands(): CommandInstance[] {
+  private async executeDialogflow(message: Message): Promise<void> {
+    const content: string = message.content
+      .split(' ')
+      .filter((arg: string) => !MessageMentions.USERS_PATTERN.test(arg))
+      .join(' ');
+
+    // Evitamos procesar contenido vacío para no gastar al bot
+    if (!content) {
+      return;
+    }
+
+    const response = await this.dialogflowService.detectIntent(content);
+
+    if (response !== null) {
+      // La respuesta viene de Dialogflow
+      if (response.fulfillmentText) {
+        await message.reply(response.fulfillmentText);
+      } else {
+        await message.reply('...');
+      }
+    }
+  }
+
+  private async executeCommand(
+    message: Message,
+    prefix: string,
+    commands: CommandInstance[],
+  ): Promise<void> {
+    const command_body: string = message.content.slice(prefix.length);
+    const args: string[] = command_body
+      .split(' ')
+      .filter((arg: string) => !MessageMentions.USERS_PATTERN.test(arg));
+    const commandName: string = args.shift().toLowerCase();
+    const commandInstances: CommandInstance[] = commands.filter(
+      (command: CommandInstance) => command.name === commandName,
+    );
+
+    if (!commandInstances.length) {
+      return;
+    }
+
+    const commandInstance: CommandInstance =
+      commandInstances.length === 1
+        ? commandInstances[0]
+        : commandInstances.find((commandInstance: CommandInstance) => {
+            const { actions } = commandInstance;
+
+            if (
+              args.length < actions.length ||
+              (!actions.length && args.length) ||
+              (actions.length && !args.length)
+            ) {
+              return false;
+            }
+
+            const $args: string = args.join(' ');
+            const $actions: string = actions.join(' ');
+
+            return $args.startsWith($actions);
+          });
+
+    if (!commandInstance) {
+      return;
+    }
+
+    args.splice(0, commandInstance.actions.length);
+
+    const { instance, method } = commandInstance;
+
+    const guards: Type<IGuard>[] = this.scanGuardsMetadata(instance, method);
+
+    for (let guardType of guards) {
+      const guardInstance: IGuard = this.moduleRef.get(guardType, {
+        strict: false,
+      });
+
+      if (guardInstance && !(await guardInstance.canActivate(message))) {
+        return;
+      }
+    }
+
+    instance[method](message, args);
+  }
+
+  private getCommands(): CommandInstance[] {
     const providers: InstanceWrapper[] = this.discoveryService.getProviders();
     return providers
       .map((wrapper: InstanceWrapper) => wrapper.instance)

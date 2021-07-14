@@ -93,13 +93,8 @@ export class BootstrapService implements OnApplicationBootstrap {
 
     const response = await this.dialogflowService.detectIntent(content);
 
-    if (response !== null) {
-      // La respuesta viene de Dialogflow
-      if (response.fulfillmentText) {
-        await message.reply(response.fulfillmentText);
-      } else {
-        await message.reply('...');
-      }
+    if (response !== null && response.fulfillmentText) {
+      await message.reply(response.fulfillmentText);
     }
   }
 

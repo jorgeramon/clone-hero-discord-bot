@@ -32,6 +32,11 @@ export const adminDocumentation: string[] = [];
 @Injectable()
 export class BootstrapService implements OnApplicationBootstrap {
   private readonly currentServer: string;
+  private readonly BOTS = [
+    Users.CLONE_HERO_HISPANO_BOT,
+    Users.PLASTIC_HERO_COMMUNITY_BOT,
+    Users.ROCKBANDERINO_BOT,
+  ];
 
   constructor(
     private readonly discoveryService: DiscoveryService,
@@ -70,7 +75,7 @@ export class BootstrapService implements OnApplicationBootstrap {
 
       if (
         message.mentions.users.some(
-          (user) => user.bot && user.id === Users.PLASTIC_HERO_COMMUNITY_BOT,
+          (user) => user.bot && this.BOTS.includes(user.id as Users),
         )
       ) {
         this.executeDialogflow(message);

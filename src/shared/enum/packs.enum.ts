@@ -49,7 +49,7 @@ export const PackDescriptions: Record<Packs, string> = {
   [Packs.Diegazos]:
     'Charter y streamer mexicano con más de 600 canciones charteadas en diferentes géneros musicales. *Compatibles con Clone Hero.*',
   [Packs.Juanito]:
-    'Charter mexicano, enfocado a Molotov. Sus gustos son ZZZ y los mios son GOD. *Compatibles con Clone Hero.*',
+    'Montaña rusa en forma de charter mexicano, tiene charts muy buenos y otros muy xd, enfocado principalmente en Español. *Compatibles con Clone Hero y algunos pocos con Rock Band 3.*',
   [Packs.Eternal]:
     'Charter mexicano enfocado en OST de videojuegos, canciones de monas chinas y cosas weeb. *Compatibles con Clone Hero.*',
   [Packs.Rockr]:

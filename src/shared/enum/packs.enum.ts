@@ -5,6 +5,8 @@ export enum Packs {
   PHC = 'phc',
   Eternal = 'eternal',
   Rockr = 'rockr',
+  Raider = 'raider',
+  Chava = 'chava',
 }
 
 export const PackLinks: Record<Packs, Object> = {
@@ -18,7 +20,7 @@ export const PackLinks: Record<Packs, Object> = {
   },
   [Packs.Juanito]: {
     'Carpeta de Drive':
-      'https://drive.google.com/drive/u/0/folders/1SHb7hvc0xvqR2h80382-GpfIAffhsg2t',
+      'https://drive.google.com/drive/folders/1y8XORv17Xmvic0XqhF-dULvd4H0KKgOa',
   },
   [Packs.Eternal]: {
     'Carpeta Drive':
@@ -27,6 +29,13 @@ export const PackLinks: Record<Packs, Object> = {
   [Packs.Rockr]: {
     'Carpeta Drive':
       'https://drive.google.com/drive/folders/1qhczcfrcKSdVH-D5V0ubpxhAltX7-2-A',
+  },
+  [Packs.Raider]: {
+    'Carpeta Drive':
+      'https://drive.google.com/drive/folders/1FF4haRjGGNxlj6qXy9uKQ9AzWfDYpPr5',
+  },
+  [Packs.Chava]: {
+    'Carpeta Drive': 'https://bit.ly/3wZ02fk',
   },
   [Packs.PHC]: {
     'Packs mensuales':
@@ -47,4 +56,7 @@ export const PackDescriptions: Record<Packs, string> = {
     'Pseudo charter mexicano, tiene bien pocas canciones pero hace lo que puede. *Compatibles con Clone Hero.*',
   [Packs.PHC]:
     'Packs mensuales de la comunidad de Plastic Hero Commuty. *Compatibles con Clone Hero.*',
+  [Packs.Chava]:
+    'Charter mexicano novato con tendencias sexuales hacia Eric Clapton, Buckethead y memes. *Compatibles con Clone Hero y Rocksmith*',
+  [Packs.Raider]: 'nose:(',
 };

@@ -57,6 +57,7 @@ export const PackDescriptions: Record<Packs, string> = {
   [Packs.PHC]:
     'Packs mensuales de la comunidad de Plastic Hero Commuty. *Compatibles con Clone Hero.*',
   [Packs.Chava]:
-    'Charter mexicano novato con tendencias sexuales hacia Eric Clapton, Buckethead y memes. *Compatibles con Clone Hero y Rocksmith*',
-  [Packs.Raider]: 'nose:(',
+    'Charter mexicano novato con tendencias sexuales hacia Eric Clapton, Buckethead y memes. *Compatibles con Clone Hero y Rocksmith.*',
+  [Packs.Raider]:
+    'Charter mexicano con canciones en distintos géneros y autor de "Que Hueva", "SinAlma" entre otros. *Compatibles con Clone Hero y Rock Band 3.*',
 };

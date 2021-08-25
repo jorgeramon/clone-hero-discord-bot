@@ -7,6 +7,7 @@ export enum Packs {
   Rockr = 'rockr',
   Raider = 'raider',
   Chava = 'chava',
+  Row = 'row',
 }
 
 export const PackLinks: Record<Packs, Object> = {
@@ -41,6 +42,10 @@ export const PackLinks: Record<Packs, Object> = {
     'Packs mensuales':
       'https://drive.google.com/drive/folders/1ucnvZyQnI1ouEX6UC2LWX03s4g9oLE4X',
   },
+  [Packs.Row]: {
+    'Carpeta Drive':
+      'https://drive.google.com/drive/folders/1yd-uq3nFmEndjJdKeACZrRNJFVmSlOhu?usp=sharing',
+  },
 };
 
 export const PackDescriptions: Record<Packs, string> = {
@@ -60,4 +65,6 @@ export const PackDescriptions: Record<Packs, string> = {
     'Charter mexicano novato con tendencias sexuales hacia Eric Clapton, Buckethead y memes. *Compatibles con Clone Hero y Rocksmith.*',
   [Packs.Raider]:
     'Charter mexicano con canciones en distintos géneros y autor de "Que Hueva", "SinAlma" entre otros. *Compatibles con Clone Hero y Rock Band 3.*',
+  [Packs.Row]:
+    'Charter mexicano, jugador profesional y CEO de Abarrotes Rubín. *Compatibles con Clone Hero.*',
 };

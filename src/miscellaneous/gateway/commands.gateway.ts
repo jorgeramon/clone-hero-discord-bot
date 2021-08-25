@@ -124,7 +124,6 @@ export class CommandsGateway {
     name: 'packs',
     usage: '[nombre del pack]',
     description: 'Muestra enlaces para descargar distintos packs.',
-    onlyFor: Servers.PHC,
   })
   async showPacks(message: Message, args: string[]): Promise<void> {
     if (!args.length) {

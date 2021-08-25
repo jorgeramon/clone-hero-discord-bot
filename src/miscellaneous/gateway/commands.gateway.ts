@@ -121,16 +121,16 @@ export class CommandsGateway {
   }
 
   @Command({
-    name: '{bot}',
-    action: 'packs',
+    name: 'packs',
     usage: '[nombre del pack]',
     description: 'Muestra enlaces para descargar distintos packs.',
+    onlyFor: Servers.PHC,
   })
   async showPacks(message: Message, args: string[]): Promise<void> {
     if (!args.length) {
       await message.channel.send(
         this.addSpaceBetween([
-          `A continuación se muestra la lista de los packs disponibles, para ver los enlaces por favor ejecuta el comando \`${this.prefix}${this.server} packs [nombre del paquete]\`:`,
+          `A continuación se muestra la lista de los packs disponibles, para ver los enlaces por favor ejecuta el comando \`${this.prefix}packs [nombre del paquete]\`:`,
           ...this.getPacksDescriptionMessage(PackDescriptions),
         ]),
       );

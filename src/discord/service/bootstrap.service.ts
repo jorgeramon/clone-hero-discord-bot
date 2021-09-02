@@ -24,6 +24,7 @@ export type CommandInstance = {
   description?: string;
   usage?: string;
   isAdmin?: boolean;
+  channel?: string[];
 };
 
 export const publicDocumentation: string[] = [];
@@ -147,7 +148,11 @@ export class BootstrapService implements OnApplicationBootstrap {
 
     args.splice(0, commandInstance.actions.length);
 
-    const { instance, method } = commandInstance;
+    const { instance, method, channel } = commandInstance;
+
+    if (channel.length && !channel.includes(message.channel.id)) {
+      return;
+    }
 
     const guards: Type<IGuard>[] = this.scanGuardsMetadata(instance, method);
 
@@ -212,6 +217,7 @@ export class BootstrapService implements OnApplicationBootstrap {
       isAdmin,
       onlyFor,
       exceptFor,
+      channel,
     } = commandMetadata;
 
     if (onlyFor && !this.isServerIncluded(onlyFor)) {
@@ -230,6 +236,7 @@ export class BootstrapService implements OnApplicationBootstrap {
       description,
       usage,
       isAdmin,
+      channel: Array.isArray(channel) ? channel : channel ? [channel] : [],
     };
   }
 

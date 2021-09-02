@@ -3,6 +3,7 @@ import { Guards } from '@discord/decorator/guard.decorator';
 import { InjectClient } from '@discord/decorator/inject-client.decorator';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PHCChannels } from '@shared/enum/channels.enum';
 import { Servers } from '@shared/enum/servers.enum';
 import { IsAdminGuard } from '@shared/guard/is-admin.guard';
 import { Client, Message, User } from 'discord.js';
@@ -22,6 +23,7 @@ export class AdminGateway {
     onlyFor: Servers.PHC,
     description:
       'Muestra los datos de la cuenta Gmail de Plastic Hero Community',
+    channel: PHCChannels.ADMIN,
   })
   async gmail(message: Message): Promise<void> {
     const email = this.configService.get('PHC_MAIL');

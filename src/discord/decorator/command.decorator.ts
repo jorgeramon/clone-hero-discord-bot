@@ -8,6 +8,7 @@ export type CommandOptions = {
   isAdmin?: boolean;
   onlyFor?: string | string[];
   exceptFor?: string | string[];
+  channel?: string | string[];
 };
 
 export const Command = (options: CommandOptions): MethodDecorator => (
